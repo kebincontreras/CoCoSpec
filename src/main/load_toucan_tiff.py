@@ -5,9 +5,12 @@ import numpy as np
 import tifffile as tiff
 
 
-def main():
-    filepath = r"C:\Users\USUARIO\Downloads\Toucan\cacao2_00012_raw.tiff"
-    filepath = Path(filepath)
+def load_visualize_tiff(scene: int, filename: str):
+    root_dir = Path(__file__).resolve().parents[2]
+    data_subfolder = "data/scenes"
+    data_dir = root_dir / data_subfolder
+    filepath = data_dir / f"Scene_{scene}" / "Toucan" / filename
+
     image = tiff.imread(filepath)
 
     print(
@@ -42,6 +45,14 @@ def main():
             axs[0, i - 1].add_patch(rect)
 
     plt.show()
+
+
+def main():
+    options = {
+        "scene": 1,
+        "filename": "HSI_open.tiff"
+    }
+    load_visualize_tiff(**options)
 
 
 if __name__ == "__main__":

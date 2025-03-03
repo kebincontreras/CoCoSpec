@@ -1,9 +1,16 @@
 import os
+from pathlib import Path
+
 import numpy as np
 import matplotlib.pyplot as plt
 from skimage import io, exposure
 from skimage.io import imread
 from scipy.interpolate import interp1d
+
+
+def load_project_dir():
+    return Path(__file__).resolve().parents[1]
+
 
 def process_dat_file(data_path):
     """Carga el archivo HSI y lo devuelve como un array 3D (Filas, Bandas, Columnas)."""
