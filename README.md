@@ -4,7 +4,7 @@ Dataset disponible en: [Spectral Cocoa Beans Dataset](https://huggingface.co/dat
 
 ## Estructura del Proyecto
 
-![data_structure](data_structure.png)
+
 
 ### Descripción
 
