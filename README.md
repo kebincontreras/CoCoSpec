@@ -1,16 +1,18 @@
 # Spectral_cacao_beans
 
-Dataset disponible en: [Spectral Cocoa Beans Dataset](https://huggingface.co/datasets/kebincontreras/Spectral_cocoa_Beans/tree/main)
+Dataset available at: [Spectral Cocoa Beans Dataset](https://huggingface.co/datasets/kebincontreras/Spectral_cocoa_Beans/tree/main)
 
-## Estructura del Proyecto
+## Project Structure
 
-![data_structure](data_structure1.png)
+![data_structure](data_structure.png)
 
-### Descripción
+### Instructions
 
-Este repositorio contiene scripts para:
-- Extraer firmas espectrales medias para granos de cacao abiertos y cerrados.
-- Calcular la firma media por escena.
-- Realizar y graficar análisis de PCA.
+1. Clone this repository.
+2. Download the `data` folder from Hugging Face and ensure it matches the structure shown in the image above.
 
-Los códigos están disponibles en este GitHub y los datos se encuentran en Hugging Face.
+### Execution
+
+When running the `main` script, it generates:
+- Plots of the average spectral signatures from local labels of each camera for both open and closed dry cocoa beans.
+- PCA analysis by scene.
