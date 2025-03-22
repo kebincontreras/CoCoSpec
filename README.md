@@ -4,7 +4,7 @@ Dataset available at: [Spectral Cocoa Beans Dataset](https://huggingface.co/data
 
 # Bitex
 @misc {kebin_andres_contreras_2025,
-	author       = { {Kebin Andres Contreras} },
+	author       = { {Kebin Contreras, Mohamad Jouni, Mauro Dalla Mura, and Jorge Bacca} },
 	title        = { Spectral_cocoa_Beans (Revision 5671cdb) },
 	year         = 2025,
 	url          = { https://huggingface.co/datasets/kebincontreras/Spectral_cocoa_Beans },
