@@ -1,6 +1,6 @@
 import os
 import numpy as np
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 from skimage import io, exposure
 from skimage.io import imread
 from scipy.interpolate import interp1d

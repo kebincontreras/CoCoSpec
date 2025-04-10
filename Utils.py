@@ -7,7 +7,7 @@ from scipy.interpolate import interp1d
 from sklearn.decomposition import PCA
 #si
 def process_dat_file(data_path):
-    """Carga el archivo HSI dependiendo de su extensión y lo devuelve como un array 3D."""
+    """Loads the HSI file depending on its extension and returns it as a 3D array"""
     if not os.path.exists(data_path):
         raise FileNotFoundError(f"No such file or directory: '{data_path}'")
     
@@ -15,7 +15,7 @@ def process_dat_file(data_path):
     if file_extension == 'dat':
         # Para archivos .dat
         data = np.fromfile(data_path, dtype=np.float32)
-        data = data.reshape((512, 204, 512))  # Ajusta esta forma según la estructura de tus datos .dat
+        data = data.reshape((512, 204, 512))  
     elif file_extension == 'npy':
         # Para archivos .npy
         data = np.load(data_path)
@@ -27,15 +27,14 @@ def process_dat_file(data_path):
 
 #si
 def generate_rgb_from_hsi_toucan(hsi_data):
-    # Longitudes de onda de las bandas disponibles
+    
     wavenumbers = np.array([431., 479., 515., 567., 611., 666., 719., 775., 820., 877.])
     
-    # Encontrar las bandas más cercanas a los picos de los colores RGB
-    red_peak = 567  # Pico de sensibilidad rojo cercano
-    green_peak = 515  # Pico de sensibilidad verde cercano
-    blue_peak = 431  # Pico de sensibilidad azul cercano
+    
+    red_peak = 567  
+    green_peak = 515  
+    blue_peak = 431  
 
-    # Encuentra los índices de las bandas más cercanas a cada pico de color
     red_index = np.abs(wavenumbers - red_peak).argmin()
     green_index = np.abs(wavenumbers - green_peak).argmin()
     blue_index = np.abs(wavenumbers - blue_peak).argmin()
@@ -49,16 +48,14 @@ def generate_rgb_from_hsi_toucan(hsi_data):
     green_curve[green_index] = 1
     blue_curve[blue_index] = 1
 
-
-    # Generar la imagen RGB
     red_channel = np.einsum('ijk,k->ij', hsi_data, red_curve)
     green_channel = np.einsum('ijk,k->ij', hsi_data, green_curve)
     blue_channel = np.einsum('ijk,k->ij', hsi_data, blue_curve)
 
-    # Normalizar la imagen para que todos los valores estén entre 0 y 1
-    max_value = 1023.0  # Máximo valor esperado para datos de 10 bits
+
+    max_value = 1023.0  
     rgb_image = np.stack([red_channel, green_channel, blue_channel], axis=-1) / max_value
-    rgb_image = np.clip(rgb_image, 0, 1)  # Asegúrate de que todos los valores estén entre 0 y 1
+    rgb_image = np.clip(rgb_image, 0, 1) 
 
     return rgb_image
 
@@ -161,7 +158,7 @@ def plot_images_and_annotations(scene_folder, scene_number, wavelengths):
     rgb_img = imread(rgb_path)
 
     # Crear plot
-    fig, axs = plt.subplots(4, 2, figsize=(20, 30))  # Ajusta para incluir una fila extra para las imágenes de Cannon
+    fig, axs = plt.subplots(4, 2, figsize=(20, 30))  
     fig.suptitle(f'Scene {scene_number}', fontsize=16)
 
         # Cannon
@@ -196,9 +193,7 @@ def plot_images_and_annotations(scene_folder, scene_number, wavelengths):
     plt.tight_layout()
     plt.show()
 
-################################################# FIRMA MEDIA
 
-#si
 def load_yolo_annotations_fixed(annotation_path, img_width, img_height):
     boxes = []
     try:
@@ -219,7 +214,7 @@ def load_yolo_annotations_fixed(annotation_path, img_width, img_height):
             except ValueError:
                 continue  
     except FileNotFoundError:
-        print(f"❌ Archivo de anotaciones no encontrado -> {annotation_path}")
+        print(f"❌ Annotation file not found -> {annotation_path}")
     return boxes
 
 #si
@@ -239,10 +234,10 @@ def extract_spectral_signatures(hsi_data, boxes, num_bands):
     return signatures
 
 def extract_wavelengths(metadata_path):
-    """Extrae los valores de longitud de onda de un archivo de metadatos .hdr y maneja el caso especial de Ultris_SR5."""
+    """Extracts wavelength values ​​from a .hdr metadata file and handles the special case of Ultris_SR5."""
     wavelengths = []
     capturing = False
-    is_ultris = "Ultris_SR5" in metadata_path  # Detecta si el archivo es de Ultris_SR5
+    is_ultris = "Ultris_SR5" in metadata_path  
     
     try:
         with open(metadata_path, 'r') as file:
@@ -269,9 +264,9 @@ def extract_wavelengths(metadata_path):
         
         # Verificar si se extrajeron valores
         if wavelengths:
-            print(f"✅ Longitudes de onda extraídas correctamente para {metadata_path.split('/')[-1]}: {wavelengths[:10]} ...")
+            print(f"✅ Correctly extracted wavelengths for {metadata_path.split('/')[-1]}: {wavelengths[:10]} ...")
         else:
-            print(f"❌ No se encontraron valores de longitud de onda en {metadata_path}.")
+            print(f"❌ No wavelength values ​​were found in {metadata_path}.")
 
         return wavelengths if wavelengths else None
 
@@ -282,7 +277,7 @@ def extract_wavelengths(metadata_path):
 def extract_rgb_from_hsi(image_data):
     num_bands = image_data.shape[2]
     if num_bands < 3:
-        print("⚠️ No hay suficientes bandas para generar RGB, usando solo la primera banda.")
+        print("⚠️ There are not enough bands to generate RGB, using only the first band.")
         return image_data[:, :, 0]
     
     red_band = min(num_bands - 1, int(num_bands * 0.75))   
@@ -298,7 +293,7 @@ def extract_rgb_from_hsi(image_data):
     rgb_image = (rgb_image - np.min(rgb_image)) / (np.max(rgb_image) - np.min(rgb_image))
     return rgb_image
 
-#si
+
 def find_brightest_pixels(image_data, num_pixels):
     grayscale = np.mean(image_data, axis=2) if image_data.ndim == 3 else image_data.copy()
     flat_indices = np.argsort(grayscale.ravel())[-num_pixels:]
@@ -311,7 +306,7 @@ def find_brightest_pixels(image_data, num_pixels):
     highlighted_image[bright_pixel_coords[0], bright_pixel_coords[1], :] = [0, 1, 0]  
     return highlighted_image, bright_pixel_coords
 
-#si
+
 def extract_spectral_signature(image_data, bright_pixel_coords):
     spectral_data = image_data[bright_pixel_coords[0], bright_pixel_coords[1], :]
     norms = np.linalg.norm(spectral_data, axis=1)
@@ -319,8 +314,9 @@ def extract_spectral_signature(image_data, bright_pixel_coords):
     return spectral_data[min_norm_index]
 
 
-#si
-def visualizar_pixeles_brillantes(camera_name):
+
+#def visualizar_pixeles_brillantes(camera_name):
+def view_bright_pixels(camera_name):
     root_dir = os.path.dirname(os.path.abspath(__file__))
 
     if camera_name == "Ultris_SR5":
@@ -367,44 +363,40 @@ def visualizar_pixeles_brillantes(camera_name):
 
     # Si no hay datos, retornar None
     if not all_signatures:
-        print(f"⚠️ No se encontraron firmas espectrales para {camera_name}")
+        print(f"⚠️ No spectral signatures were found for {camera_name}")
         return None, None
 
-    # Calcular la firma media de todas las escenas
     avg_closed_sig = np.mean([sig[0] for sig in all_signatures], axis=0)
     avg_open_sig = np.mean([sig[1] for sig in all_signatures], axis=0)
 
-    return avg_closed_sig, avg_open_sig  # Retornar las firmas promedio
+    return avg_closed_sig, avg_open_sig  
 
-#si
 def plot_normalized_signatures(camera_name, wavelengths, root_dir):
     """
-    Procesa las imágenes y genera gráficos de firmas espectrales para una cámara específica.
+    Processes images and generates spectral signature graphs for a specific camera.
     """
     if camera_name not in wavelengths:
         print(f"❌ Cámara '{camera_name}' no encontrada en metadatos.")
         return
     
-    camera_wavelengths = wavelengths[camera_name]  # Obtiene las longitudes de onda de la cámara
-    global_data = {"open": {0: [], 1: [], 2: []}, "closed": {0: [], 1: [], 2: []}}  # Estructura de datos
+    camera_wavelengths = wavelengths[camera_name]  
+    global_data = {"open": {0: [], 1: [], 2: []}, "closed": {0: [], 1: [], 2: []}}  
 
     # Diccionario de etiquetas para clasificar los espectros
     LABELS = {0: "Good", 1: "Bad", 2: "Partial"}
     COLORS = {"Good": "blue", "Bad": "red", "Partial": "green"}
 
-    # **Determinar si se debe aplicar reflectancia**
     usar_reflectancia = camera_name in ["Ultris_SR5", "Toucan"]
     
-    # **Obtener firma media si se va a aplicar reflectancia**
     if usar_reflectancia:
-        avg_closed_sig, avg_open_sig = visualizar_pixeles_brillantes(camera_name)
+        avg_closed_sig, avg_open_sig = view_bright_pixels(camera_name)
 
     for i in range(1, 20):
         scene_folder = os.path.join(root_dir, f'Scene_{i}')
         camera_folder = os.path.join(scene_folder, camera_name)
 
         if not os.path.exists(camera_folder):
-            print(f"⚠️ Cámara '{camera_name}' no encontrada en {scene_folder}, saltando escena.")
+            print(f"⚠️ Cámara '{camera_name}' not found in {scene_folder}.")
             continue
 
         # Procesamiento de archivos según la cámara
@@ -435,7 +427,7 @@ def plot_normalized_signatures(camera_name, wavelengths, root_dir):
 
         available_conditions = [cond for cond in image_paths if os.path.exists(image_paths[cond])]
         if not available_conditions:
-            print(f"⚠️ No se encontraron archivos de imagen para '{camera_name}' en {camera_folder}, saltando escena.")
+            print(f"⚠️ No image files were found for '{camera_name}' en {camera_folder}.")
             continue
 
         for condition in available_conditions:
@@ -443,7 +435,7 @@ def plot_normalized_signatures(camera_name, wavelengths, root_dir):
             annotation_path = os.path.join(camera_folder, f'annotations_{condition}.txt')
             print(f"📂 Procesando {camera_name} en {camera_folder} - {condition}")
             
-            # **Leer imágenes según la cámara**
+        
             if camera_name == "Specim_IQ":
                 image_data = np.fromfile(image_path, dtype=np.float32).reshape((512, 204, 512))
                 image_data = np.transpose(image_data, (0, 2, 1))  # Ajuste de dimensiones
@@ -454,18 +446,17 @@ def plot_normalized_signatures(camera_name, wavelengths, root_dir):
                 if camera_name == "EOS_M50":
                     image_data = image_data.astype(np.float32) / 255.0  # Normalizar entre 0 y 1
             
-            # **Procesar las anotaciones si existen**
             if os.path.exists(annotation_path):
                 boxes = load_yolo_annotations_fixed(annotation_path, image_data.shape[1], image_data.shape[0])
                 spectral_signatures = extract_spectral_signatures(image_data, boxes, num_bands)
                 for label in LABELS.keys():
                     global_data[condition][label].append(spectral_signatures[label])
             else:
-                print(f"⚠️ Archivo de anotaciones no encontrado: {annotation_path}, omitiendo.")
+                print(f"⚠️ Annotation file not found: {annotation_path}.")
 
     has_data = any(global_data[condition][label] for condition in ["closed", "open"] for label in LABELS.keys())
     if not has_data:
-        print(f"⚠️ No hay datos disponibles para la cámara '{camera_name}', no se generará gráfico.")
+        print(f"⚠️ No data available for the camera '{camera_name}'.")
         return
 
     plt.figure(figsize=(15, 5))
@@ -478,11 +469,10 @@ def plot_normalized_signatures(camera_name, wavelengths, root_dir):
                 signature_stack = np.stack(global_data[condition][label])
                 average_signature = np.mean(signature_stack, axis=0)
 
-                # **Aplicar reflectancia solo en Ultris_SR5 y Toucan**
+               
                 if usar_reflectancia:
                     average_signature /= avg_open_sig  # Reflectancia
 
-                # **Normalización Min-Max para todas las cámaras**
                 min_val, max_val = np.min(average_signature), np.max(average_signature)
                 if max_val != min_val:
                     average_signature = (average_signature - min_val) / (max_val - min_val)
@@ -497,10 +487,9 @@ def plot_normalized_signatures(camera_name, wavelengths, root_dir):
     plt.tick_params(axis='both', which='major', labelsize=12)
     plt.legend()
     plt.grid(True)
-    plt.title(f"Firmas Espectrales - {camera_name}")
+    plt.title(f"Spectral Signatures - {camera_name}")
     plt.show()
 
-######################################## PCA
 def load_yolo_annotations_fixed(annotation_path, img_width, img_height):
     boxes = []
     try:
@@ -540,11 +529,10 @@ def extract_spectral_signatures(hsi_data, boxes, num_bands):
     return signatures
 
 def extract_wavelengths(metadata_path):
-    """Extrae los valores de longitud de onda de un archivo de metadatos .hdr y maneja el caso especial de Ultris_SR5."""
+    """Extracts wavelength values ​​from a .hdr metadata file and handles the special case of Ultris_SR5."""
     wavelengths = []
     capturing = False
-    is_ultris = "Ultris_SR5" in metadata_path  # Detecta si el archivo es de Ultris_SR5
-    
+    is_ultris = "Ultris_SR5" in metadata_path  
     try:
         with open(metadata_path, 'r') as file:
             for line in file:
@@ -570,9 +558,9 @@ def extract_wavelengths(metadata_path):
         
         # Verificar si se extrajeron valores
         if wavelengths:
-            print(f"✅ Longitudes de onda extraídas correctamente para {metadata_path.split('/')[-1]}: {wavelengths[:10]} ...")
+            print(f"✅ Correctly extracted wavelengths for {metadata_path.split('/')[-1]}: {wavelengths[:10]} ...")
         else:
-            print(f"❌ No se encontraron valores de longitud de onda en {metadata_path}.")
+            print(f"❌ No wavelength values ​​were found in {metadata_path}.")
 
         return wavelengths if wavelengths else None
 
@@ -583,7 +571,7 @@ def extract_wavelengths(metadata_path):
 def extract_rgb_from_hsi(image_data):
     num_bands = image_data.shape[2]
     if num_bands < 3:
-        print("⚠️ No hay suficientes bandas para generar RGB, usando solo la primera banda.")
+        print("⚠️ There are not enough bands to generate RGB, using only the first band.")
         return image_data[:, :, 0]
     
     red_band = min(num_bands - 1, int(num_bands * 0.75))   
@@ -617,7 +605,7 @@ def extract_spectral_signature(image_data, bright_pixel_coords):
     min_norm_index = np.argmin(norms)
     return spectral_data[min_norm_index]
 
-def visualizar_pixeles_brillantes(camera_name):
+def view_bright_pixels(camera_name):
     root_dir = os.path.dirname(os.path.abspath(__file__))
 
     if camera_name == "Ultris_SR5":
@@ -629,8 +617,8 @@ def visualizar_pixeles_brillantes(camera_name):
         num_pixels = 100000  
         num_bands = 10  
     else:
-        print(f"❌ Cámara '{camera_name}' no reconocida.")
-        return None, None  # Retornar None si no es una cámara válida
+        print(f"❌ Camera '{camera_name}' Little recognized.")
+        return None, None  
     
     num_scenes = 19
     all_signatures = []
@@ -645,7 +633,7 @@ def visualizar_pixeles_brillantes(camera_name):
         }
 
         if not os.path.exists(image_paths["closed"]) or not os.path.exists(image_paths["open"]):
-            print(f"⚠️ No se encontraron ambas imágenes en {camera_name} - Scene_{i}, saltando.")
+            print(f"⚠️ Both images were not found in {camera_name} - Scene_{i}, saltando.")
             continue
 
         if camera_name == "Ultris_SR5":
@@ -662,34 +650,34 @@ def visualizar_pixeles_brillantes(camera_name):
         open_signature = extract_spectral_signature(open_data, bright_pixels_open)
         all_signatures.append((closed_signature, open_signature))
 
-    # Si no hay datos, retornar None
+
     if not all_signatures:
-        print(f"⚠️ No se encontraron firmas espectrales para {camera_name}")
+        print(f"⚠️ No spectral signatures were found for {camera_name}")
         return None, None
 
-    # Calcular la firma media de todas las escenas
+
     avg_closed_sig = np.mean([sig[0] for sig in all_signatures], axis=0)
     avg_open_sig = np.mean([sig[1] for sig in all_signatures], axis=0)
 
-    return avg_closed_sig, avg_open_sig  # Retornar las firmas promedio
+    return avg_closed_sig, avg_open_sig  
 
 def plot_pca_spectral_signatures(camera_name, wavelengths, root_dir):
     """
-    Calcula el PCA de las firmas espectrales normalizadas por escena y grafica las dos primeras componentes principales.
+    Computes the PCA of the scene-normalized spectral signatures and plots the first two principal components.
     """
     if camera_name not in wavelengths:
-        print(f"❌ Cámara '{camera_name}' no encontrada en metadatos.")
+        print(f"❌ Camera '{camera_name}' not found in metadata.")
         return
 
     camera_wavelengths = wavelengths[camera_name]
-    global_scene_data = {"open": [], "closed": []}  # Estructura para almacenar firmas por escena
+    global_scene_data = {"open": [], "closed": []} 
 
     for i in range(1, 20):
         scene_folder = os.path.join(root_dir, f'Scene_{i}')
         camera_folder = os.path.join(scene_folder, camera_name)
 
         if not os.path.exists(camera_folder):
-            print(f"⚠️ Cámara '{camera_name}' no encontrada en {scene_folder}, saltando escena.")
+            print(f"⚠️ Cámara '{camera_name}' not found in {scene_folder}.")
             continue
 
         # Rutas de imágenes según la cámara
@@ -720,10 +708,10 @@ def plot_pca_spectral_signatures(camera_name, wavelengths, root_dir):
 
         available_conditions = [cond for cond in image_paths if os.path.exists(image_paths[cond])]
         if not available_conditions:
-            print(f"⚠️ No se encontraron archivos de imagen para '{camera_name}' en {camera_folder}, saltando escena.")
+            print(f"⚠️ No image files were found for '{camera_name}' en {camera_folder}.")
             continue
 
-        scene_signatures = {"open": [], "closed": []}  # Almacena firmas por escena
+        scene_signatures = {"open": [], "closed": []}  
         
         for condition in available_conditions:
             image_path = image_paths[condition]
@@ -733,31 +721,30 @@ def plot_pca_spectral_signatures(camera_name, wavelengths, root_dir):
             
             if camera_name == "Specim_IQ":
                 image_data = np.fromfile(image_path, dtype=np.float32)
-                image_data = image_data.reshape((512, 204, 512))  # Dimensiones correctas
-                image_data = np.transpose(image_data, (0, 2, 1))  # Ajuste para análisis
+                image_data = image_data.reshape((512, 204, 512))  
+                image_data = np.transpose(image_data, (0, 2, 1)) 
             elif camera_name == "Toucan":
                 image_data = np.load(image_path)
             else:
                 image_data = imread(image_path)
                 if camera_name == "EOS_M50":
-                    image_data = image_data.astype(np.float32) / 255.0  # Normalizar entre 0 y 1
+                    image_data = image_data.astype(np.float32) / 255.0 
             
             if os.path.exists(annotation_path):
                 boxes = load_yolo_annotations_fixed(annotation_path, image_data.shape[1], image_data.shape[0])
                 spectral_signatures = extract_spectral_signatures(image_data, boxes, num_bands)
                 
-                scene_signatures[condition].extend(spectral_signatures.values())  # Almacena todas las firmas de la escena
+                scene_signatures[condition].extend(spectral_signatures.values()) 
         
         for condition in ["open", "closed"]:
             if scene_signatures[condition]:
                 avg_scene_signature = np.mean(np.stack(scene_signatures[condition]), axis=0)
 
-                # Aplicar Normalización Min-Max
                 min_val, max_val = np.min(avg_scene_signature), np.max(avg_scene_signature)
                 if max_val != min_val:
                     avg_scene_signature = (avg_scene_signature - min_val) / (max_val - min_val)
                 
-                global_scene_data[condition].append(avg_scene_signature)  # Guardar firma media
+                global_scene_data[condition].append(avg_scene_signature)  
 
     all_scenes = []
     labels = []
@@ -777,7 +764,7 @@ def plot_pca_spectral_signatures(camera_name, wavelengths, root_dir):
                 colors.append("yellow") 
 
     if not all_scenes:
-        print(f"⚠️ No hay datos suficientes para PCA en {camera_name}.")
+        print(f"⚠️ There are insufficient data for PCA in {camera_name}.")
         return
 
     data_matrix = np.array(all_scenes)
@@ -799,7 +786,7 @@ def plot_pca_spectral_signatures(camera_name, wavelengths, root_dir):
     
     plt.xlabel("Componente Principal 1")
     plt.ylabel("Componente Principal 2")
-    plt.title(f"PCA de Firmas Espectrales - {camera_name}")
+    plt.title(f"PCA of Spectral Signatures - {camera_name}")
     
     # ✅ **Ubicar la leyenda dentro de la gráfica**
     plt.legend(handles=handles, title="Grupo de Escenas", loc="upper left", frameon=True)
@@ -809,7 +796,7 @@ def plot_pca_spectral_signatures(camera_name, wavelengths, root_dir):
     plt.show()
 
     explained_variance = pca.explained_variance_ratio_ * 100
-    print(f"Varianza explicada por PC1: {explained_variance[0]:.2f}%")
-    print(f"Varianza explicada por PC2: {explained_variance[1]:.2f}%")
+    print(f"Variance explained by PC1: {explained_variance[0]:.2f}%")
+    print(f"Variance explained by PC2: {explained_variance[1]:.2f}%")
 
 
