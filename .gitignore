@@ -172,3 +172,24 @@ cython_debug/
 
 # Custom ignores
 /data
+/Metadata/
+/Scene_1/
+/Scene_2/
+/Scene_3/
+/Scene_4/
+/Scene_5/
+/Scene_6/
+/Scene_7/
+/Scene_8/
+/Scene_9/
+/Scene_10/
+/Scene_11/
+/Scene_12/
+/Scene_13/
+/Scene_14/
+/Scene_15/
+/Scene_16/
+/Scene_17/
+/Scene_18/
+/Scene_19/
+/Physicochemical.csv
