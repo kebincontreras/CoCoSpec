@@ -57,36 +57,31 @@ def plot_images_and_annotations(scene_folder, scene_number, wavelengths):
     rgb_img = imread(rgb_path)
 
     # Crear plot
-    fig, axs = plt.subplots(4, 2, figsize=(20, 30))
+    fig, axs = plt.subplots(2, 4, figsize=(20, 30))
     fig.suptitle(f'Scene {scene_number}', fontsize=16)
 
     # Cannon
     axs[0, 0].imshow(label_ferm_img)
     axs[0, 0].set_title("Fermentation Labels")
-    axs[0, 1].imshow(rgb_img)
-    axs[0, 1].set_title("Cannon Open")
+    axs[1, 0].imshow(rgb_img)
+    axs[1, 0].set_title("Cannon Open")
 
     # Toucan
-    axs[1, 0].imshow(closed_rgb_toucan)
-    axs[1, 0].set_title("Toucan Closed")
+    axs[0, 1].imshow(closed_rgb_toucan)
+    axs[0, 1].set_title("Toucan Closed")
     axs[1, 1].imshow(open_rgb_toucan)
     axs[1, 1].set_title("Toucan Open")
 
     # Ultris
-    axs[2, 0].imshow(closed_rgb_ultris)
-    axs[2, 0].set_title("Ultris Closed")
-    axs[2, 1].imshow(open_rgb_ultris)
-    axs[2, 1].set_title("Ultris Open")
+    axs[0, 2].imshow(closed_rgb_ultris)
+    axs[0, 2].set_title("Ultris Closed")
+    axs[1, 2].imshow(open_rgb_ultris)
+    axs[1, 2].set_title("Ultris Open")
 
     # Specim IQ
-    axs[3, 0].imshow(closed_rgb_iq)
-    axs[3, 0].set_title("Specim IQ Closed")
-    axs[3, 1].imshow(open_rgb_iq)
-    axs[3, 1].set_title("Specim IQ Open")
+    axs[0, 3].imshow(closed_rgb_iq)
+    axs[0, 3].set_title("Specim IQ Closed")
+    axs[1, 3].imshow(open_rgb_iq)
+    axs[1, 3].set_title("Specim IQ Open")
 
-    for ax_row in axs:
-        for ax in ax_row:
-            ax.axis('off')
-
-    plt.tight_layout()
     plt.show()

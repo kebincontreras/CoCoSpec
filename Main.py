@@ -44,6 +44,6 @@ for i in range(19, 20):
     scene_folder = os.path.join(root_dir, f'Scene_{i}')
     plot_images_and_annotations(scene_folder, i, variables["wavelengths"])
 
-for camera in metadata_paths.keys():
-    plot_normalized_signatures(camera, wavelengths, root_dir)
-    plot_pca_spectral_signatures(camera, wavelengths, root_dir)
+# for camera in metadata_paths.keys():
+#     plot_normalized_signatures(camera, wavelengths, root_dir)
+#     plot_pca_spectral_signatures(camera, wavelengths, root_dir)
