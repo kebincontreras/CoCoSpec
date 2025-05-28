@@ -80,7 +80,11 @@ def plot_reduction_subplots(averaged_data_open, averaged_data_closed):
                 reducer.fit(all_data)
                 explained = reducer.explained_variance_ratio_
                 print(f"📊 Variance explained ({condition} - PCA): PC1 = {explained[0]:.2%}, PC2 = {explained[1]:.2%}")
+            #reduced = reducer.fit_transform(all_data)
+            if method_name == "UMAP":
+                np.random.seed(42)  
             reduced = reducer.fit_transform(all_data)
+
 
             ax = axs[row, col]
             for label, color, name in zip([0, 1, 2], ['blue', 'red', 'green'], ['Good', 'Bad', 'Partial']):
