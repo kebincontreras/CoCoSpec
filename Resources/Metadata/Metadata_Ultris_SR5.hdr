@@ -1,0 +1,23 @@
+ENVI
+description = {
+ Date: 2024-11-14, 
+ Time: 14:46:32.315UTC, 
+ Serial: BSR5234801, 
+ Comment: exp. 50 ms (main) }
+
+samples =290
+lines   =275
+bands   =51
+header offset = 0
+file type = ENVI Standard
+data type = 12
+interleave = BIP
+sensor type = Cubert Ultris SR5
+z plot average = {1,1}
+default stretch  = square root
+z plot titles = {wavelength [nm]!N,  counts [a.u]}
+byte order = 0
+bbl= {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,}
+wavelength = {450,458,466,474,482,490,498,506,514,522,530,538,546,554,562,570,578,586,594,602,610,618,626,634,642,650,658,666,674,682,690,698,706,714,722,730,738,746,754,762,770,778,786,794,802,810,818,826,834,842,850}
+band names = {450nm,458nm,466nm,474nm,482nm,490nm,498nm,506nm,514nm,522nm,530nm,538nm,546nm,554nm,562nm,570nm,578nm,586nm,594nm,602nm,610nm,618nm,626nm,634nm,642nm,650nm,658nm,666nm,674nm,682nm,690nm,698nm,706nm,714nm,722nm,730nm,738nm,746nm,754nm,762nm,770nm,778nm,786nm,794nm,802nm,810nm,818nm,826nm,834nm,842nm,850nm}
+wavelength units = nm

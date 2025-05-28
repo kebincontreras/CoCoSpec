@@ -1,0 +1,10 @@
+ENVI
+description = {
+Data recorded with EOS_M50
+}
+
+wavelength = {
+450,
+550,
+650
+}
