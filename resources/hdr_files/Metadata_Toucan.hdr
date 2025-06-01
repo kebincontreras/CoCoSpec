@@ -1,8 +1,0 @@
-ENVI
-description = {
- Date: 2024-11-14, 
- Time: 14:46:32.315UTC, 
- Comment: exp. 50 ms (main) }
-
-wavelength = {431,479,515,567,611,666,719,775,820,877}
-
