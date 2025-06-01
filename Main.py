@@ -1,13 +1,12 @@
 import sys
 import os
+
+from src.utils.PCA import extract_specim_signatures_by_scene, reshape_signatures_df, plot_pc1_colormap_per_property
+from src.utils.pca_sampling import compute_random_averaged_signatures_specim, plot_reduction_subplots
+from src.utils.processing import extract_wavelengths, plot_normalized_signatures
+
 sys.path.append(os.path.join(os.path.dirname(__file__), 'Utils'))
-from Utils.pca import * 
-from Utils.yolo_utils import *
-import os   
-import pandas as pd
-from Utils.processing import *
-from Utils.pca_sampling import *
-from Utils.pca_sampling import compute_random_averaged_signatures_specim, plot_reduction_subplots
+import os
 
 LABELS = {0: "Good", 1: "Bad", 2: "Partially"}
 COLORS = {"Good": "blue", "Bad": "red", "Partially": "green"}

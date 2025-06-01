@@ -1,6 +1,7 @@
 Dataset available at: [Spectral Cocoa Beans Dataset](https://huggingface.co/datasets/kebincontreras/Spectral_cocoa_Beans/tree/main)
 
-# Bitex
+# Bibtex
+```
 @misc {Contreras,
 	author       = { {Kebin Contreras, Mohamad Jouni, Mauro Dalla Mura, and Jorge Bacca} },
 	title        = { Spectral_cocoa_Beans (Revision 5671cdb) },
@@ -9,6 +10,7 @@ Dataset available at: [Spectral Cocoa Beans Dataset](https://huggingface.co/data
 	doi          = { 10.57967/hf/4847 },
 	publisher    = { Hugging Face }
 }
+```
 
 ## Project Structure
 

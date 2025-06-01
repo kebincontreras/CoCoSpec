@@ -1,12 +1,13 @@
 import os
 import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib import cm
+import pandas as pd
 from sklearn.decomposition import PCA
-from skimage.io import imread
-from Utils.yolo_utils import load_yolo_annotations
-from Utils.processing import extract_spectral_signatures
+
+from src.utils.processing import extract_spectral_signatures
+from src.utils.utils_yolo import load_yolo_annotations
+
 
 def extract_specim_signatures_by_scene(root_dir, wavelengths):
     num_bands = len(wavelengths["Specim_IQ"])

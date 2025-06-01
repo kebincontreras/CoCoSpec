@@ -1,16 +1,18 @@
 import os
-import numpy as np
+import warnings
+
 import matplotlib.pyplot as plt
+import numpy as np
+import umap
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
-import warnings
+
+from src.utils.utils_yolo import load_yolo_annotations
+
 warnings.filterwarnings("ignore", message=".*n_jobs value 1 overridden.*")
-import umap
-from Utils.yolo_utils import load_yolo_annotations
-from Utils.processing import extract_spectral_signatures
+
 
 def compute_random_averaged_signatures_specim(root_dir, condition, num_combinations=100, group_size=50):
-
     data = {0: [], 1: [], 2: []}
     num_bands = 204
 
@@ -49,8 +51,8 @@ def compute_random_averaged_signatures_specim(root_dir, condition, num_combinati
 
     return averaged_data
 
-def plot_reduction_subplots(averaged_data_open, averaged_data_closed):
 
+def plot_reduction_subplots(averaged_data_open, averaged_data_closed):
     plt.rcParams.update({
         "font.family": "Times New Roman",
         "font.size": 30
@@ -80,11 +82,10 @@ def plot_reduction_subplots(averaged_data_open, averaged_data_closed):
                 reducer.fit(all_data)
                 explained = reducer.explained_variance_ratio_
                 print(f"📊 Variance explained ({condition} - PCA): PC1 = {explained[0]:.2%}, PC2 = {explained[1]:.2%}")
-            #reduced = reducer.fit_transform(all_data)
+            # reduced = reducer.fit_transform(all_data)
             if method_name == "UMAP":
-                np.random.seed(42)  
+                np.random.seed(42)
             reduced = reducer.fit_transform(all_data)
-
 
             ax = axs[row, col]
             for label, color, name in zip([0, 1, 2], ['blue', 'red', 'green'], ['Good', 'Bad', 'Partial']):
