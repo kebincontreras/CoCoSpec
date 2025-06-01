@@ -13,10 +13,12 @@ dependencies = [
     "matplotlib>=3.10.3",
     "numpy>=2.2.6",
     "pandas>=2.2.3",
+    "pydantic>=2.11.5",
     "pyqt6>=6.9.0",
     "scikit-image>=0.25.2",
     "scikit-learn>=1.6.1",
     "scipy>=1.15.3",
+    "spectral>=0.24",
     "umap>=0.1.1",
 ]
 
