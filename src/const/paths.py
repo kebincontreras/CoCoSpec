@@ -38,6 +38,15 @@ def image_filepath(
     return camera_dir(scene=scene, camera_name=camera_name) / filename
 
 
+def annotations_filepath(
+        scene: int,
+        camera_name: CamerasEnum,
+        cocoa_condition: CocoaConditionsEnum,
+) -> Path:
+    filename = f"annotations_{cocoa_condition.value.lower()}.txt"
+    return camera_dir(scene=scene, camera_name=camera_name) / filename
+
+
 def res_dir() -> Path:
     return data_dir() / "resources"
 

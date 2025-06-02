@@ -7,7 +7,7 @@ import numpy as np
 from pydantic import BaseModel
 
 from src.const.enums import CamerasEnum, CocoaConditionsEnum, ImageFormatsEnum
-from src.const.paths import image_filepath, cameras_config_path
+from src.const.paths import image_filepath, cameras_config_path, annotations_filepath
 from src.loading.loading import load_wavelengths, load_image, load_from_json, get_item
 
 
@@ -52,6 +52,14 @@ class AcquisitionInfo(BaseModel):
             scene=self.scene,
             camera_name=self.camera_name,
             extension=self.file_extension,
+            cocoa_condition=self.cocoa_condition,
+        )
+
+    @property
+    def annotations_filepath(self) -> Path:
+        return annotations_filepath(
+            scene=self.scene,
+            camera_name=self.camera_name,
             cocoa_condition=self.cocoa_condition,
         )
 

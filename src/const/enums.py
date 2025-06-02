@@ -10,7 +10,7 @@ class CamerasEnum(str, Enum):
 
 class CocoaConditionsEnum(str, Enum):
     OPEN = "open"
-    CLOSE = "close"
+    CLOSED = "closed"
 
 
 class ImageFormatsEnum(str, Enum):
