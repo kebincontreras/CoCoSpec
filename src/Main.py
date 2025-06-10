@@ -1,6 +1,7 @@
 import os
 
 from const.paths import project_dir, res_dir
+from src.const.paths import data_dir
 from src.utils.PCA import extract_specim_signatures_by_scene, reshape_signatures_df, plot_pc1_colormap_per_property
 from src.utils.pca_sampling import compute_random_averaged_signatures_specim, plot_reduction_subplots
 from src.utils.processing import extract_wavelengths, plot_normalized_signatures
@@ -21,16 +22,16 @@ COLORS = {
 def main():
     root_dir = project_dir()
 
-    metadata_dir = res_dir() / "metadata"
-    metadata_paths = {
-        "Specim_IQ": os.path.join(metadata_dir, "Metadata_Specim_IQ.hdr"),
-        "EOS_M50": os.path.join(metadata_dir, "Metadata_EOS_M50.hdr"),
-        "Ultris_SR5": os.path.join(metadata_dir, "Metadata_Ultris_SR5.hdr"),
-        "Toucan": os.path.join(metadata_dir, "Metadata_Toucan.hdr")
+    hdr_files_dir = res_dir() / "hdr_files_obsolete"
+    hdr_filepaths = {
+        "specim_iq": os.path.join(hdr_files_dir, "Metadata_Specim_IQ.hdr"),
+        "eos_m50": os.path.join(hdr_files_dir, "Metadata_EOS_M50.hdr"),
+        "ultris_sr5": os.path.join(hdr_files_dir, "Metadata_Ultris_SR5.hdr"),
+        "toucan": os.path.join(hdr_files_dir, "Metadata_Toucan.hdr")
     }
-    wavelengths = {camera: extract_wavelengths(path) for camera, path in metadata_paths.items()}
-    for camera in metadata_paths.keys():
-        plot_normalized_signatures(camera, wavelengths, root_dir)
+    wavelengths = {camera: extract_wavelengths(path) for camera, path in hdr_filepaths.items()}
+    for camera in hdr_filepaths.keys():
+        plot_normalized_signatures(camera, wavelengths, data_dir())
 
     avg_open = compute_random_averaged_signatures_specim(root_dir, condition="open")
     avg_closed = compute_random_averaged_signatures_specim(root_dir, condition="closed")

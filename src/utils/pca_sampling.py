@@ -3,7 +3,7 @@ import warnings
 
 import matplotlib.pyplot as plt
 import numpy as np
-import umap
+import umap.umap_ as umap
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
 
@@ -17,8 +17,8 @@ def compute_random_averaged_signatures_specim(root_dir, condition, num_combinati
     num_bands = 204
 
     for scene_id in range(1, 20):
-        folder = os.path.join(root_dir, f"Scenes/Scene_{scene_id:02d}/Specim_IQ")
-        img_path = os.path.join(folder, f"HSI_{condition}.dat")
+        folder = os.path.join(root_dir, f"scenes/scene_{scene_id:02d}/specim_iq")
+        img_path = os.path.join(folder, f"hsi_{condition}.dat")
         ann_path = os.path.join(folder, f"annotations_{condition}.txt")
         if not os.path.exists(img_path) or not os.path.exists(ann_path):
             continue

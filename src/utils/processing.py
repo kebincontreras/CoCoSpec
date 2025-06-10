@@ -56,14 +56,14 @@ def extract_spectral_signatures(hsi_data, boxes, num_bands):
     return signatures
 
 
-def plot_normalized_signatures(camera_name, wavelengths, root_dir):
+def plot_normalized_signatures(camera_name, wavelengths, data_dir):
     if camera_name not in wavelengths:
         print(f"❌ Camera '{camera_name}' Not found in metadata..")
         return
 
     camera_wavelengths = wavelengths[camera_name]
 
-    if camera_name == "Specim_IQ":
+    if camera_name == "specim_iq":
         camera_wavelengths = np.array(camera_wavelengths)
         mask_specim = (camera_wavelengths >= 480) & (camera_wavelengths <= 950)
         camera_wavelengths = camera_wavelengths[mask_specim]
@@ -76,37 +76,37 @@ def plot_normalized_signatures(camera_name, wavelengths, root_dir):
     COLORS = {"Good": "blue", "Bad": "red", "Partial": "green"}
 
     for i in range(1, 20):
-        scene_folder = os.path.join(root_dir, "Scenes", f'Scene_{i:02d}')
+        scene_folder = os.path.join(data_dir, "scenes", f'scene_{i:02d}')
         camera_folder = os.path.join(scene_folder, camera_name)
 
         if not os.path.exists(camera_folder):
             print(f"⚠️ Cámara '{camera_name}' not found in {scene_folder}.")
             continue
 
-        if camera_name == "Specim_IQ":
+        if camera_name == "specim_iq":
             image_paths = {
-                "closed": os.path.join(camera_folder, "HSI_closed.dat"),
-                "open": os.path.join(camera_folder, "HSI_open.dat")
+                "closed": os.path.join(camera_folder, "hsi_closed.dat"),
+                "open": os.path.join(camera_folder, "hsi_open.dat")
             }
             num_bands = 204
-        elif camera_name == "EOS_M50":
-            image_paths = {"open": os.path.join(camera_folder, "HSI_open.jpg")}
+        elif camera_name == "eos_m50":
+            image_paths = {"open": os.path.join(camera_folder, "hsi_open.jpg")}
             num_bands = 3
 
 
-        elif camera_name == "Ultris_SR5":
+        elif camera_name == "ultris_sr5":
             image_paths = {
-                "closed": os.path.join(camera_folder, "HSI_closed.tiff"),
-                "open": os.path.join(camera_folder, "HSI_open.tiff")
+                "closed": os.path.join(camera_folder, "hsi_closed.tiff"),
+                "open": os.path.join(camera_folder, "hsi_open.tiff")
             }
             num_bands = len(camera_wavelengths)
-        elif camera_name == "Toucan":
-            alternative_camera_folder = os.path.join(root_dir, "Toucan", f'Scene_{i}')
+        elif camera_name == "toucan":
+            alternative_camera_folder = os.path.join(data_dir, "toucan", f'scene_{i}')
             if os.path.exists(alternative_camera_folder):
                 camera_folder = alternative_camera_folder
             image_paths = {
-                "closed": os.path.join(camera_folder, "HSI_closed.npy"),
-                "open": os.path.join(camera_folder, "HSI_open.npy")
+                "closed": os.path.join(camera_folder, "hsi_closed.npy"),
+                "open": os.path.join(camera_folder, "hsi_open.npy")
             }
             num_bands = len(camera_wavelengths)
 
@@ -120,14 +120,14 @@ def plot_normalized_signatures(camera_name, wavelengths, root_dir):
             annotation_path = os.path.join(camera_folder, f'annotations_{condition}.txt')
             print(f"📂 Processing {camera_name} in {camera_folder} - {condition}")
 
-            if camera_name == "Specim_IQ":
+            if camera_name == "specim_iq":
                 image_data = np.fromfile(image_path, dtype=np.float32).reshape((512, 204, 512))
                 image_data = np.transpose(image_data, (0, 2, 1))
-            elif camera_name == "Toucan":
+            elif camera_name == "toucan":
                 image_data = np.load(image_path)
             else:
                 image_data = imread(image_path)
-                if camera_name == "EOS_M50":
+                if camera_name == "eos_m50":
                     image_data = image_data[:, :, ::-1]  # BGR → RGB
                     image_data = image_data.astype(np.float32) / 255.0
 
@@ -159,14 +159,14 @@ def plot_normalized_signatures(camera_name, wavelengths, root_dir):
                 signature_stack = np.stack(global_data[condition][label])
                 average_signature = np.mean(signature_stack, axis=0)
 
-                if camera_name == "Specim_IQ":
+                if camera_name == "specim_iq":
                     average_signature = np.array(average_signature)[mask_specim]
 
                 min_val, max_val = np.min(average_signature), np.max(average_signature)
                 if max_val != min_val:
                     average_signature = (average_signature - min_val) / (max_val - min_val)
 
-                wavelengths_to_plot = [450, 550, 650] if camera_name == "EOS_M50" else camera_wavelengths
+                wavelengths_to_plot = [450, 550, 650] if camera_name == "eos_m50" else camera_wavelengths
 
                 plt.plot(wavelengths_to_plot, average_signature,
                          label=f'{condition} - {LABELS[label]}',

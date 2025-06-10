@@ -5,7 +5,7 @@ from matplotlib import cm
 import pandas as pd
 from sklearn.decomposition import PCA
 
-from src.utils.processing import extract_spectral_signatures
+from src.loading.loading import extract_spectral_signatures
 from src.utils.utils_yolo import load_yolo_annotations
 
 
