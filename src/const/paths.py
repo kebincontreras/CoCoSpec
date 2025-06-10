@@ -1,6 +1,6 @@
-from pathlib import Path
+"""Module that composes and returns frequently used project, data, and resources Paths."""
 
-from src.const.enums import CamerasEnum, CocoaConditionsEnum
+from pathlib import Path
 
 
 def project_dir() -> Path:
@@ -22,28 +22,28 @@ def scene_dir(scene: int) -> Path:
 
 def camera_dir(
         scene: int,
-        camera_name: CamerasEnum,
+        camera_name: str,
 ) -> Path:
-    folder_name = camera_name.value.lower()
+    folder_name = camera_name.lower()
     return scene_dir(scene=scene) / folder_name
 
 
 def image_filepath(
         scene: int,
-        camera_name: CamerasEnum,
+        camera_name: str,
         extension: str,
-        cocoa_condition: CocoaConditionsEnum,
+        cocoa_condition: str,
 ) -> Path:
-    filename = f"hsi_{cocoa_condition.value.lower()}.{extension}"
+    filename = f"hsi_{cocoa_condition.lower()}.{extension}"
     return camera_dir(scene=scene, camera_name=camera_name) / filename
 
 
 def annotations_filepath(
         scene: int,
-        camera_name: CamerasEnum,
-        cocoa_condition: CocoaConditionsEnum,
+        camera_name: str,
+        cocoa_condition: str,
 ) -> Path:
-    filename = f"annotations_{cocoa_condition.value.lower()}.txt"
+    filename = f"annotations_{cocoa_condition.lower()}.txt"
     return camera_dir(scene=scene, camera_name=camera_name) / filename
 
 
@@ -51,17 +51,42 @@ def res_dir() -> Path:
     return data_dir() / "resources"
 
 
+def dark_fields_dir() -> Path:
+    return res_dir() / "dark_fields"
+
+
+def dark_field_filepath(
+        camera_name: str,
+        extension: str,
+) -> Path:
+    filename = f"{camera_name.lower()}.{extension}"
+    return dark_fields_dir() / filename
+
+
+def flat_fields_dir() -> Path:
+    return res_dir() / "flat_fields"
+
+
+def flat_field_filepath(
+        camera_name: str,
+        extension: str,
+) -> Path:
+    filename = f"{camera_name.lower()}.{extension}"
+    return flat_fields_dir() / filename
+
+
 def metadata_dir() -> Path:
     return res_dir() / "metadata"
 
 
-def cameras_config_path() -> Path:
-    return metadata_dir() / "cameras.json"
+def wavelengths_dir() -> Path:
+    return res_dir() / "wavelengths"
 
 
 def main():
     print(project_dir())
     print(data_dir())
+    print(flat_field_filepath(camera_name="toucan", extension="tiff"))
 
 
 if __name__ == "__main__":
