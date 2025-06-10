@@ -5,6 +5,7 @@ import numpy as np
 from pydantic import BaseModel
 
 from src.const.enums import CamerasEnum, CocoaConditionsEnum, ImageFormatsEnum, file_extension
+from src.const.hyperspectral_image import HyperspectralImage
 from src.const.paths import image_filepath, annotations_filepath
 from src.loading.loading import load_image
 from src.schemas.cameras import CameraInfo
@@ -106,6 +107,18 @@ class AcquisitionInfo(BaseModel):
         camera_info = self.load_camera_info()
         image = camera_info.load_dark_field()
         return np.asarray(image)
+
+    def load_hyperspectral_image(
+            self,
+            normalize: bool = False,
+    ) -> HyperspectralImage:
+        camera_info = self.load_camera_info()
+        return HyperspectralImage.create(
+            image=self.load_image(normalize=normalize),
+            wavelengths=camera_info.load_wavelengths(),
+            wavelengths_unit=camera_info.wavelengths_unit,
+            rgb_bands=camera_info.rgb_channels,
+        )
 
 
 def main():
