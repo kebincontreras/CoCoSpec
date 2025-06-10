@@ -22,3 +22,15 @@ class ImageFormatsEnum(str, Enum):
     DAT = "dat"
     HDR = "hdr"
     ENVI = "envi"
+
+
+def file_extension(image_format: ImageFormatsEnum) -> str:
+    if image_format == ImageFormatsEnum.ENVI:
+        extension = ImageFormatsEnum.HDR
+    else:
+        extension = image_format
+
+    if isinstance(extension, Enum):
+        extension = extension.value.lower()
+
+    return extension
