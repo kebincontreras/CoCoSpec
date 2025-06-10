@@ -1,15 +1,22 @@
+"""Module that takes a file path and loads an object."""
+
 import json
 from pathlib import Path
 from typing import Any
 
 import numpy as np
 import pandas as pd
-from PIL import Image
 import spectral
 import tifffile as tiff
+from PIL import Image
 
-from src.const.enums import CamerasEnum, ImageFormatsEnum
-from src.const.paths import res_dir
+from src.const.enums import CamerasEnum, ImageFormatsEnum, CocoaConditionsEnum
+
+
+def load_from_json(filepath: Path) -> dict | list[dict]:
+    with open(file=f"{filepath}", mode="r") as file_opened:
+        content = json.load(file_opened)
+    return content
 
 
 def get_item(items_list: dict, key: str, value: Any) -> Any:
@@ -19,19 +26,14 @@ def get_item(items_list: dict, key: str, value: Any) -> Any:
     raise ValueError(f"Item not found in list.")
 
 
-def load_from_json(filepath: Path) -> dict:
-    with open(file=f"{filepath}", mode="r") as file_opened:
-        content = json.load(file_opened)
-    return content
-
-
 def load_wavelengths(
-        camera_name: CamerasEnum,
+        filepath: Path,
+        wavelength_min: float = None,
+        wavelength_max: float = None,
 ) -> np.ndarray:
-    wavelengths_dir = res_dir() / "wavelengths"
-    wl_filename = f"{camera_name.value.lower()}.csv"
-    wl_filepath = wavelengths_dir / wl_filename
-    wavelengths = pd.read_csv(wl_filepath)["wavelengths (nm)"].to_numpy()
+    wavelengths = pd.read_csv(filepath)["wavelengths (nm)"].to_numpy()
+    wavelengths = crop_wavelengths(wavelengths=wavelengths, wavelength_min=wavelength_min,
+                                   wavelength_max=wavelength_max)
     return wavelengths
 
 
@@ -40,8 +42,8 @@ def load_image(
         image_format: ImageFormatsEnum,
 ) -> np.ndarray:
     if image_format == ImageFormatsEnum.JPG:
-        image = Image.open(fp=f"{filepath}")
-        image_arr = np.array(image)
+        image = Image.open(fp=f"{filepath}").convert(mode='RGB')
+        image_arr = np.array(image)[:, :, ::-1]
 
     elif image_format in [ImageFormatsEnum.ENVI, ImageFormatsEnum.HDR]:
         image = spectral.open_image(file=f"{filepath}")
@@ -56,13 +58,17 @@ def load_image(
     else:
         raise ValueError(f"Image format '{image_format}' is not supported yet.")
 
-    return image_arr
+    return np.asarray(image_arr)
 
 
-def main():
-    wavelengths = load_wavelengths(camera_name=CamerasEnum.EOS_M50)
-    print(wavelengths)
-
-
-if __name__ == "__main__":
-    main()
+def crop_wavelengths(
+        wavelengths: np.ndarray,
+        wavelength_min: float = None,
+        wavelength_max: float = None,
+) -> np.ndarray:
+    mask = np.ones_like(wavelengths, dtype=bool)
+    if wavelength_min is not None:
+        mask &= wavelengths >= wavelength_min
+    if wavelength_max is not None:
+        mask &= wavelengths <= wavelength_max
+    return wavelengths[mask]
