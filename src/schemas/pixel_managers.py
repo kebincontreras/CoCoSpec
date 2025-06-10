@@ -4,7 +4,7 @@ import numpy as np
 from pydantic import BaseModel
 
 
-class NeighborhoodPixels(BaseModel):
+class PixelsNeighborhood(BaseModel):
     center_pos: list  # [row, col]
     size: int  # distance from center
     factor: float
@@ -41,7 +41,7 @@ class NeighborhoodPixels(BaseModel):
         return wr
 
 
-class LabeledPixels(BaseModel):
+class PixelsList(BaseModel):
     positions: list[list[int, int]]
     labels: list[str]
     categories: list[str]
@@ -70,8 +70,13 @@ class LabeledPixels(BaseModel):
 
     def filter_by_category(self, category: str) -> Self:
         indices = self.get_arg_category(category=category)
-        return LabeledPixels(
+        return PixelsList(
             positions=[self.positions[idx] for idx in indices],
             labels=[self.labels[idx] for idx in indices],
             categories=[self.categories[idx] for idx in indices]
         )
+
+
+class AcquisitionPixelsInfo(BaseModel):
+    reference_spectra: PixelsNeighborhood | PixelsList
+    selected_spectra: PixelsNeighborhood | PixelsList
