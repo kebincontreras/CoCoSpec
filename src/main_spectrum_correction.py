@@ -16,6 +16,7 @@ def fill_figure(
         acquisition_info: AcquisitionInfo,
         acquisition_pixels: AcquisitionPixelsInfo,
         is_normalize_reference: bool = False,
+        is_minmax_spectra: bool = False,
         xlim: tuple = None,
         ylim: tuple = (-0.1, 1.2),
 ):
@@ -44,7 +45,8 @@ def fill_figure(
 
     if acquisition_pixels.selected is not None:
         selected_spectra = acquisition_pixels.get_selected_spectra(image=image)
-        selected_spectra = min_max(selected_spectra)
+        if is_minmax_spectra:
+            selected_spectra = min_max(selected_spectra)
 
         pixels_rows, pixels_cols = acquisition_pixels.get_selected_pixels_positions().T
         axs[0, col_idx].scatter(pixels_cols, pixels_rows)
@@ -105,11 +107,11 @@ def main():
 
                 # Visualize the figures for each image
                 fill_figure(axs_original, col_idx=idx, image=image_normalized, acquisition_info=acq_info,
-                            acquisition_pixels=acq_pixels, is_normalize_reference=True)
+                            acquisition_pixels=acq_pixels, is_normalize_reference=False, is_minmax_spectra=True)
                 fill_figure(axs_referenced, col_idx=idx, image=image_referenced, acquisition_info=acq_info,
-                            acquisition_pixels=acq_pixels, is_normalize_reference=True)
+                            acquisition_pixels=acq_pixels, is_normalize_reference=True, is_minmax_spectra=True)
                 fill_figure(axs_fielded, col_idx=idx, image=image_fielded, acquisition_info=acq_info,
-                            acquisition_pixels=acq_pixels, is_normalize_reference=True)
+                            acquisition_pixels=acq_pixels, is_normalize_reference=True, is_minmax_spectra=True)
 
             plt.show()
             print()

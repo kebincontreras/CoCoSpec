@@ -72,7 +72,7 @@ def flat_field_filepath(
         extension: str,
 ) -> Path:
     filename = f"{camera_name.lower()}.{extension}"
-    return flat_fields_dir() / filename
+    return flat_fields_dir() / "spectralon_halogen" / filename
 
 
 def metadata_dir() -> Path:
