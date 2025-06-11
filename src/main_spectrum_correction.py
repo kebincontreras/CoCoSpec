@@ -104,9 +104,12 @@ def main():
                 image_fielded = correct_reference_spectrum(image_fielded, spectrum=reference_spectrum)
 
                 # Visualize the figures for each image
-                fill_figure(axs_original, col_idx=idx, image=image_normalized, acquisition_info=acq_info, acquisition_pixels=acq_pixels, is_normalize_reference=True)
-                fill_figure(axs_referenced, col_idx=idx, image=image_referenced, acquisition_info=acq_info, acquisition_pixels=acq_pixels, is_normalize_reference=True)
-                fill_figure(axs_fielded, col_idx=idx, image=image_fielded, acquisition_info=acq_info, acquisition_pixels=acq_pixels, is_normalize_reference=True)
+                fill_figure(axs_original, col_idx=idx, image=image_normalized, acquisition_info=acq_info,
+                            acquisition_pixels=acq_pixels, is_normalize_reference=True)
+                fill_figure(axs_referenced, col_idx=idx, image=image_referenced, acquisition_info=acq_info,
+                            acquisition_pixels=acq_pixels, is_normalize_reference=True)
+                fill_figure(axs_fielded, col_idx=idx, image=image_fielded, acquisition_info=acq_info,
+                            acquisition_pixels=acq_pixels, is_normalize_reference=True)
 
             plt.show()
             print()
