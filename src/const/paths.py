@@ -81,13 +81,3 @@ def metadata_dir() -> Path:
 
 def wavelengths_dir() -> Path:
     return res_dir() / "wavelengths"
-
-
-def main():
-    print(project_dir())
-    print(data_dir())
-    print(flat_field_filepath(camera_name="toucan", extension="tiff"))
-
-
-if __name__ == "__main__":
-    main()
