@@ -4,6 +4,42 @@ import numpy as np
 from pydantic import BaseModel
 
 
+class PixelsList(BaseModel):
+    positions: list[list[int, int]]
+    labels: list[str]
+    categories: list[str]
+
+    @property
+    def positions_array(self) -> np.ndarray:
+        return np.array(self.positions)
+
+    @property
+    def unique_categories(self) -> set:
+        return set(self.categories)
+
+    def get_arg_category(self, category: str) -> list[int]:
+        return [idx for idx, cat in enumerate(self.categories) if cat == category]
+
+    def filter_positions_by_category(self, category: str) -> list[list[int, int]]:
+        indices = self.get_arg_category(category=category)
+        return [self.positions[idx] for idx in indices]
+
+    def filter_positions_by_category_as_array(self, category: str) -> np.ndarray:
+        return np.array(self.filter_positions_by_category(category=category))
+
+    def filter_labels_by_category(self, category: str) -> list[str]:
+        indices = self.get_arg_category(category=category)
+        return [self.labels[idx] for idx in indices]
+
+    def filter_by_category(self, category: str) -> Self:
+        indices = self.get_arg_category(category=category)
+        return PixelsList(
+            positions=[self.positions[idx] for idx in indices],
+            labels=[self.labels[idx] for idx in indices],
+            categories=[self.categories[idx] for idx in indices]
+        )
+
+
 class PixelsNeighborhood(BaseModel):
     center_pos: list  # [row, col]
     size: int  # distance from center
@@ -39,42 +75,6 @@ class PixelsNeighborhood(BaseModel):
         if apply_factor:
             wr = wr / self.factor
         return wr
-
-
-class PixelsList(BaseModel):
-    positions: list[list[int, int]]
-    labels: list[str]
-    categories: list[str]
-
-    @property
-    def positions_array(self) -> np.ndarray:
-        return np.array(self.positions)
-
-    @property
-    def unique_categories(self) -> set:
-        return set(self.categories)
-
-    def get_arg_category(self, category: str) -> list[int]:
-        return [idx for idx, cat in enumerate(self.categories) if cat == category]
-
-    def filter_positions_by_category(self, category: str) -> list[list[int, int]]:
-        indices = self.get_arg_category(category=category)
-        return [self.positions[idx] for idx in indices]
-
-    def filter_positions_by_category_as_array(self, category: str) -> np.ndarray:
-        return np.array(self.filter_positions_by_category(category=category))
-
-    def filter_labels_by_category(self, category: str) -> list[str]:
-        indices = self.get_arg_category(category=category)
-        return [self.labels[idx] for idx in indices]
-
-    def filter_by_category(self, category: str) -> Self:
-        indices = self.get_arg_category(category=category)
-        return PixelsList(
-            positions=[self.positions[idx] for idx in indices],
-            labels=[self.labels[idx] for idx in indices],
-            categories=[self.categories[idx] for idx in indices]
-        )
 
 
 class AcquisitionPixelsInfo(BaseModel):

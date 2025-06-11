@@ -44,63 +44,6 @@ def load_pixels_info() -> dict:
     return pixels_info
 
 
-def main():
-    pixels_info = load_pixels_info()
-
-    for scene in [19]:
-        scene_pixels = pixels_info[scene]
-        options_list = [
-            {
-                "scene": scene,
-                "camera_name": "eos_m50",
-                "format": "jpg",
-                "cocoa_condition": "open",
-            },
-            {
-                "scene": scene,
-                "camera_name": "specim_iq",
-                "format": "envi",
-                "cocoa_condition": "open",
-            },
-            {
-                "scene": scene,
-                "camera_name": "toucan",
-                "format": "npy",
-                "cocoa_condition": "open",
-            },
-            {
-                "scene": scene,
-                "camera_name": "ultris_sr5",
-                "format": "tiff",
-                "cocoa_condition": "open",
-            },
-        ]
-        acquisitions_list = [AcquisitionInfo(**options) for options in options_list]
-
-        fig, axs_orig = plt.subplots(nrows=3, ncols=4, squeeze=False, figsize=(15, 5))
-        fig, axs_refr = plt.subplots(nrows=3, ncols=4, squeeze=False, figsize=(15, 5))
-        fig, axs_fiel = plt.subplots(nrows=3, ncols=4, squeeze=False, figsize=(15, 5))
-
-        for idx, acq in enumerate(acquisitions_list):
-            image_raw = acq.load_image(normalize=False)
-            print(f"Loading an image from the {acq.camera_name.value.upper()} camera with shape {image_raw.shape}.")
-
-            image_normalized = acq.normalize_image(image=image_raw)
-            fill_figure(axs_orig, col_idx=idx, image=image_normalized, acquisition_info=acq, scene_pixels=scene_pixels)
-
-            image_referenced = apply_reference_spectrum(image_raw, acquisition_info=acq, scene_pixels=scene_pixels)
-            fill_figure(axs_refr, col_idx=idx, image=image_referenced, acquisition_info=acq, scene_pixels=scene_pixels)
-
-            flat = acq.load_flat_field()
-            dark = acq.load_dark_field()
-            image_fielded = correct_flat_and_dark(image_raw, flat_field=flat, dark_field=dark)
-            image_fielded = apply_reference_spectrum(image_fielded, acquisition_info=acq, scene_pixels=scene_pixels)
-            fill_figure(axs_fiel, col_idx=idx, image=image_fielded, acquisition_info=acq, scene_pixels=scene_pixels)
-
-        plt.show()
-        print()
-
-
 def apply_reference_spectrum(
         image: np.ndarray,
         acquisition_info: AcquisitionInfo,
@@ -159,6 +102,63 @@ def fill_figure(
         axs[2, col_idx].grid()
 
     return axs
+
+
+def main():
+    pixels_info = load_pixels_info()
+
+    for scene in [19]:
+        scene_pixels = pixels_info[scene]
+        options_list = [
+            {
+                "scene": scene,
+                "camera_name": "eos_m50",
+                "format": "jpg",
+                "cocoa_condition": "open",
+            },
+            {
+                "scene": scene,
+                "camera_name": "specim_iq",
+                "format": "envi",
+                "cocoa_condition": "open",
+            },
+            {
+                "scene": scene,
+                "camera_name": "toucan",
+                "format": "npy",
+                "cocoa_condition": "open",
+            },
+            {
+                "scene": scene,
+                "camera_name": "ultris_sr5",
+                "format": "tiff",
+                "cocoa_condition": "open",
+            },
+        ]
+        acquisitions_list = [AcquisitionInfo(**options) for options in options_list]
+
+        fig, axs_orig = plt.subplots(nrows=3, ncols=4, squeeze=False, figsize=(15, 5))
+        fig, axs_refr = plt.subplots(nrows=3, ncols=4, squeeze=False, figsize=(15, 5))
+        fig, axs_fiel = plt.subplots(nrows=3, ncols=4, squeeze=False, figsize=(15, 5))
+
+        for idx, acq in enumerate(acquisitions_list):
+            image_raw = acq.load_image(normalize=False)
+            print(f"Loading an image from the {acq.camera_name.value.upper()} camera with shape {image_raw.shape}.")
+
+            image_normalized = acq.normalize_image(image=image_raw)
+            fill_figure(axs_orig, col_idx=idx, image=image_normalized, acquisition_info=acq, scene_pixels=scene_pixels)
+
+            image_referenced = apply_reference_spectrum(image_raw, acquisition_info=acq, scene_pixels=scene_pixels)
+            fill_figure(axs_refr, col_idx=idx, image=image_referenced, acquisition_info=acq, scene_pixels=scene_pixels)
+
+            flat = acq.load_flat_field()
+            dark = acq.load_dark_field()
+            image_fielded = correct_flat_and_dark(image_raw, flat_field=flat, dark_field=dark)
+            image_fielded = apply_reference_spectrum(image_fielded, acquisition_info=acq, scene_pixels=scene_pixels)
+            fill_figure(axs_fiel, col_idx=idx, image=image_fielded, acquisition_info=acq, scene_pixels=scene_pixels)
+
+        plt.show()
+        print()
 
 
 if __name__ == "__main__":
