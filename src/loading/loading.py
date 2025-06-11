@@ -33,8 +33,11 @@ def load_wavelengths(
         wavelength_max: float = None,
 ) -> np.ndarray:
     wavelengths = pd.read_csv(filepath)["wavelengths (nm)"].to_numpy()
-    wavelengths = crop_wavelengths(wavelengths=wavelengths, wavelength_min=wavelength_min,
-                                   wavelength_max=wavelength_max)
+    wavelengths = crop_wavelengths(
+        wavelengths=wavelengths,
+        wavelength_min=wavelength_min,
+        wavelength_max=wavelength_max,
+    )
     return wavelengths
 
 

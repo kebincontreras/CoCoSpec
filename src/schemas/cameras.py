@@ -5,9 +5,8 @@ import numpy as np
 from pydantic import BaseModel
 
 from src.const.enums import CamerasEnum, ImageFormatsEnum, file_extension, CocoaConditionsEnum
-from src.const.paths import wavelengths_dir, flat_field_filepath, flat_fields_dir, dark_field_filepath, dark_fields_dir, \
-    metadata_dir
-from src.loading.loading import load_from_json, get_item, load_wavelengths, load_image, load_cameras_metadata
+from src.const.paths import wavelengths_dir, flat_field_filepath, flat_fields_dir, dark_field_filepath, dark_fields_dir
+from src.loading.loading import get_item, load_wavelengths, load_image, load_cameras_metadata
 
 
 class CameraInfo(BaseModel):

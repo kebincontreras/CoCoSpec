@@ -14,25 +14,16 @@ def apply_reference_spectrum(
         image: np.ndarray,
         acquisition_pixels: AcquisitionPixelsInfo,
 ) -> np.ndarray:
+    """
+    Applies the reference spectrum correction by loading the average of the reference spectra found in the
+      acquisition's pixels metadata.
+    """
     if acquisition_pixels.reference is not None:
         reference_spectrum = acquisition_pixels.reference.get_average_spectrum(image=image)
-        image_corrected = correct_reference_spectrum(image, reference_spectrum)
+        image_corrected = correct_reference_spectrum(image, spectrum=reference_spectrum)
     else:
         image_corrected = image / image.max()
     return image_corrected
-
-
-def save_reference_spectrum(
-        image: np.ndarray,
-        acquisition_info: AcquisitionInfo,
-        acquisition_pixels: AcquisitionPixelsInfo,
-) -> None:
-    if acquisition_pixels.reference is not None:
-        reference_spectrum = acquisition_pixels.reference.get_average_spectrum(image=image)
-        ref_spectra_dir = res_dir() / "reference_spectra"
-        filename = f"{acquisition_info.camera_name.value.lower()}.npy"
-        filepath = ref_spectra_dir / filename
-        np.save(file=filepath, arr=reference_spectrum)
 
 
 def fill_figure(
@@ -106,8 +97,8 @@ def main():
             fig, axs_fielded = plt.subplots(nrows=3, ncols=4, squeeze=False, figsize=(15, 5))
 
             for idx, acq_info in enumerate(acquisitions_info_list):
-                print(f"Loading an image from the {acq_info.camera_name.value.upper()} camera.")
                 acq_pixels = acq_info.load_pixels_info()
+                print(f"Loading an image from the {acq_info.camera_name.value.upper()} camera.")
 
                 # Load image as it is without any modifications
                 image_raw = acq_info.load_image(normalize=False)
@@ -124,6 +115,7 @@ def main():
                 image_fielded = correct_flat_and_dark(image_raw, flat_field=flat, dark_field=dark)
                 image_fielded = apply_reference_spectrum(image_fielded, acquisition_pixels=acq_pixels)
 
+                # Visualize the figures for each image
                 fill_figure(axs_original, col_idx=idx, image=image_normalized, acquisition_info=acq_info, acquisition_pixels=acq_pixels, is_normalize_reference=True)
                 fill_figure(axs_referenced, col_idx=idx, image=image_referenced, acquisition_info=acq_info, acquisition_pixels=acq_pixels, is_normalize_reference=True)
                 fill_figure(axs_fielded, col_idx=idx, image=image_fielded, acquisition_info=acq_info, acquisition_pixels=acq_pixels, is_normalize_reference=True)
