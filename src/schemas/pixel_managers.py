@@ -43,7 +43,7 @@ class PixelsList(BaseModel):
 
 
 class PixelsNeighborhood(BaseModel):
-    center_position: list  # [row, col]
+    center_position: list[int, int]  # [row, col]
     size: int  # distance from center
 
     def get_center_position_array(self) -> np.ndarray:
@@ -53,9 +53,7 @@ class PixelsNeighborhood(BaseModel):
         return image[self.center_position[0], self.center_position[1], :]
 
     def get_average_spectrum(self, image: np.ndarray) -> np.ndarray:
-        rows, cols = self.get_positions_array().T
-        spectra = image[rows, cols, :]
-        return spectra.mean(axis=0)
+        return self.get_spectra(image=image).mean(axis=0)
 
     def get_spectrum(self, image: np.ndarray, typ: str) -> np.ndarray:
         if typ == "center":
@@ -107,5 +105,12 @@ class AcquisitionPixelsInfo(BaseModel):
         """
         return self.selected.get_positions_array()
 
-    def get_selected_spectra(self, image:np.ndarray) ->np.ndarray:
+    def get_selected_spectra(self, image: np.ndarray) -> np.ndarray:
         return self.selected.get_spectra(image=image)
+
+    def get_reference_spectrum(self, image: np.ndarray) -> np.ndarray:
+        if self.reference is not None:
+            spectrum = self.reference.get_center_spectrum(image=image)
+        else:
+            spectrum = image.max()
+        return spectrum

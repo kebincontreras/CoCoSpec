@@ -1,29 +1,12 @@
 import numpy as np
 from matplotlib import pyplot as plt
 
-from src.const.paths import res_dir
 from src.loading.loading import load_cameras_metadata
 from src.schemas.acquisitions import AcquisitionInfo
 from src.schemas.cameras import CameraInfo
 from src.schemas.pixel_managers import AcquisitionPixelsInfo
 from src.utils.arrays import normalize, min_max
 from src.utils.spectra import correct_flat_and_dark, correct_reference_spectrum
-
-
-def apply_reference_spectrum(
-        image: np.ndarray,
-        acquisition_pixels: AcquisitionPixelsInfo,
-) -> np.ndarray:
-    """
-    Applies the reference spectrum correction by loading the average of the reference spectra found in the
-      acquisition's pixels metadata.
-    """
-    if acquisition_pixels.reference is not None:
-        reference_spectrum = acquisition_pixels.reference.get_average_spectrum(image=image)
-        image_corrected = correct_reference_spectrum(image, spectrum=reference_spectrum)
-    else:
-        image_corrected = image / image.max()
-    return image_corrected
 
 
 def fill_figure(
@@ -79,6 +62,9 @@ def main():
     cameras_info_list = [CameraInfo(**options) for options in load_cameras_metadata()]
     for scene in [19]:
         for cocoa_condition in ["open", "closed"]:
+            print(f"Scene {scene:02}:")
+            print(f"Cocoa condition {cocoa_condition}:")
+
             # Below, we study the pixels composition for each 4 camera acquisitions, per scene and per cocoa_condition
             acquisitions_info_options = [
                 {
@@ -98,7 +84,7 @@ def main():
 
             for idx, acq_info in enumerate(acquisitions_info_list):
                 acq_pixels = acq_info.load_pixels_info()
-                print(f"Loading an image from the {acq_info.camera_name.value.upper()} camera.")
+                print(f"\tLoading an image from the {acq_info.camera_name.value.upper()} camera.")
 
                 # Load image as it is without any modifications
                 image_raw = acq_info.load_image(normalize=False)
@@ -107,13 +93,15 @@ def main():
                 image_normalized = acq_info.normalize_image(image=image_raw)
 
                 # Correct the spectra by a spectral reference pixel, if a Spectralon exists in the scene
-                image_referenced = apply_reference_spectrum(image_raw, acquisition_pixels=acq_pixels)
+                reference_spectrum = acq_pixels.get_reference_spectrum(image=image_raw)
+                image_referenced = correct_reference_spectrum(image_raw, spectrum=reference_spectrum)
 
                 # Correct the spectra by the flat and dark field images, if a flat and dark exist for the camera
                 flat = acq_info.load_flat_field()
                 dark = acq_info.load_dark_field()
                 image_fielded = correct_flat_and_dark(image_raw, flat_field=flat, dark_field=dark)
-                image_fielded = apply_reference_spectrum(image_fielded, acquisition_pixels=acq_pixels)
+                reference_spectrum = acq_pixels.get_reference_spectrum(image=image_fielded)
+                image_fielded = correct_reference_spectrum(image_fielded, spectrum=reference_spectrum)
 
                 # Visualize the figures for each image
                 fill_figure(axs_original, col_idx=idx, image=image_normalized, acquisition_info=acq_info, acquisition_pixels=acq_pixels, is_normalize_reference=True)
