@@ -9,9 +9,6 @@ class PixelsList(BaseModel):
     labels: list[str]
     categories: list[str]
 
-    def get_positions_array(self) -> np.ndarray:
-        return np.array(self.positions)
-
     def get_unique_categories(self) -> set:
         return set(self.categories)
 
@@ -37,6 +34,13 @@ class PixelsList(BaseModel):
             categories=[self.categories[idx] for idx in indices]
         )
 
+    def get_positions_array(self) -> np.ndarray:
+        return np.array(self.positions)
+
+    def get_spectra(self, image: np.ndarray) -> np.ndarray:
+        rows, cols = self.get_positions_array().T
+        return image[rows, cols, :]
+
 
 class PixelsNeighborhood(BaseModel):
     center_position: list  # [row, col]
@@ -48,6 +52,27 @@ class PixelsNeighborhood(BaseModel):
     def get_center_spectrum(self, image: np.ndarray) -> np.ndarray:
         return image[self.center_position[0], self.center_position[1], :]
 
+    def get_average_spectrum(self, image: np.ndarray) -> np.ndarray:
+        rows, cols = self.get_positions_array()
+        spectra = image[rows, cols, :]
+        return spectra.mean(axis=0)
+
+    def get_spectrum(self, image: np.ndarray, typ: str) -> np.ndarray:
+        if typ == "center":
+            ref_spectrum = self.get_center_spectrum(image=image)
+        elif typ == "average":
+            ref_spectrum = self.get_average_spectrum(image=image)
+        else:
+            raise ValueError()
+        return ref_spectrum
+
+    @property
+    def positions(self) -> list[list[int, int]]:
+        """
+        Returns the positions of all the pixels in the neighborhood as a list of N positions (i.e., list([row, col])).
+        """
+        return self.get_positions_array().tolist()
+
     def get_positions_array(self) -> np.ndarray:
         """
         Returns the positions of all the pixels in the neighborhood as an array of shape N x 2 (i.e., N x [row, col]).
@@ -58,25 +83,9 @@ class PixelsNeighborhood(BaseModel):
         positions_array = np.stack([grid_rows.ravel(), grid_cols.ravel()]).T
         return positions_array
 
-    def get_average_spectrum(self, image: np.ndarray) -> np.ndarray:
-        rows, cols = self.get_positions_array()
-        spectra = image[rows, cols, :]
-        return spectra.mean(axis=0)
-
-    def get_spectrum(self, image: np.ndarray, typ: str, apply_factor: bool = 1.) -> np.ndarray:
-        if typ == "center":
-            ref_spectrum = self.get_center_spectrum(image=image)
-        elif typ == "average":
-            ref_spectrum = self.get_average_spectrum(image=image)
-        else:
-            raise ValueError()
-        return ref_spectrum
-
-    def get_positions(self) -> list[list[int, int]]:
-        """
-        Returns the positions of all the pixels in the neighborhood as a list of N positions (i.e., list([row, col])).
-        """
-        return self.get_positions_array().tolist()
+    def get_spectra(self, image: np.ndarray) -> np.ndarray:
+        rows, cols = self.get_positions_array().T
+        return image[rows, cols, :]
 
 
 class AcquisitionPixelsInfo(BaseModel):

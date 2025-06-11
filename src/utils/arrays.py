@@ -3,8 +3,9 @@ import numpy as np
 
 def normalize(
         array: np.ndarray,
+        axis: int = None,
 ) -> np.ndarray:
-    max_vals = array.max(axis=1, keepdims=True)
+    max_vals = array.max(axis=axis, keepdims=True)
     array_normalized = array / max_vals
     return array_normalized
 

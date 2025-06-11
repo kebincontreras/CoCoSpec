@@ -81,7 +81,7 @@ def fill_figure(
     if reference_spectra_pos is not None:
         pixels_rows, pixels_cols = np.array(reference_spectra_pos).T
         selected_spectra = image[pixels_rows, pixels_cols, :]
-        selected_spectra = normalize(selected_spectra)
+        selected_spectra = normalize(selected_spectra, axis=1)
 
         axs[0, col_idx].scatter(pixels_cols, pixels_rows)
         axs[1, col_idx].plot(wavelengths, selected_spectra.T)
