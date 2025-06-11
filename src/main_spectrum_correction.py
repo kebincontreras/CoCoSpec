@@ -1,6 +1,8 @@
 import numpy as np
 from matplotlib import pyplot as plt
 
+from src.const.enums import CocoaConditionsEnum
+from src.const.paths import res_dir
 from src.loading.loading import load_acquisitions_pixels_info
 from src.schemas.acquisitions import AcquisitionInfo
 from src.schemas.pixel_managers import AcquisitionPixelsInfo
@@ -18,6 +20,19 @@ def apply_reference_spectrum(
     else:
         image_corrected = image / image.max()
     return image_corrected
+
+
+def save_reference_spectrum(
+        image: np.ndarray,
+        acquisition_info: AcquisitionInfo,
+        acquisition_pixels: AcquisitionPixelsInfo,
+) -> None:
+    if acquisition_pixels.reference is not None:
+        reference_spectrum = acquisition_pixels.reference.get_average_spectrum(image=image)
+        ref_spectra_dir = res_dir() / "reference_spectra"
+        filename = f"{acquisition_info.camera_name.value.lower()}.npy"
+        filepath = ref_spectra_dir / filename
+        np.save(file=filepath, arr=reference_spectrum)
 
 
 def fill_figure(
@@ -66,78 +81,81 @@ def main():
     global_pixels_info = load_acquisitions_pixels_info()
 
     for scene in [19]:
-        scene_pixels = global_pixels_info[scene]
-        options_list = [
-            {
-                "scene": scene,
-                "camera_name": "eos_m50",
-                "format": "jpg",
-                "cocoa_condition": "open",
-            },
-            {
-                "scene": scene,
-                "camera_name": "specim_iq",
-                "format": "envi",
-                "cocoa_condition": "open",
-            },
-            {
-                "scene": scene,
-                "camera_name": "toucan",
-                "format": "npy",
-                "cocoa_condition": "open",
-            },
-            {
-                "scene": scene,
-                "camera_name": "ultris_sr5",
-                "format": "tiff",
-                "cocoa_condition": "open",
-            },
-        ]
-        acquisitions_list = [AcquisitionInfo(**options) for options in options_list]
+        for cocoa_condition in ["open"]:
+            acquisitions_info_options = [
+                {
+                    "scene": scene,
+                    "camera_name": "eos_m50",
+                    "format": "jpg",
+                    "cocoa_condition": cocoa_condition,
+                },
+                {
+                    "scene": scene,
+                    "camera_name": "specim_iq",
+                    "format": "envi",
+                    "cocoa_condition": cocoa_condition,
+                },
+                {
+                    "scene": scene,
+                    "camera_name": "toucan",
+                    "format": "npy",
+                    "cocoa_condition": cocoa_condition,
+                },
+                {
+                    "scene": scene,
+                    "camera_name": "ultris_sr5",
+                    "format": "tiff",
+                    "cocoa_condition": cocoa_condition,
+                },
+            ]
+            acquisitions_info_list = [AcquisitionInfo(**options) for options in acquisitions_info_options]
 
-        fig, axs_orig = plt.subplots(nrows=3, ncols=4, squeeze=False, figsize=(15, 5))
-        fig, axs_refr = plt.subplots(nrows=3, ncols=4, squeeze=False, figsize=(15, 5))
-        fig, axs_fiel = plt.subplots(nrows=3, ncols=4, squeeze=False, figsize=(15, 5))
+            fig, axs_original = plt.subplots(nrows=3, ncols=4, squeeze=False, figsize=(15, 5))
+            fig, axs_referenced = plt.subplots(nrows=3, ncols=4, squeeze=False, figsize=(15, 5))
+            fig, axs_fielded = plt.subplots(nrows=3, ncols=4, squeeze=False, figsize=(15, 5))
 
-        for idx, acq in enumerate(acquisitions_list):
-            acquisition_pixels = AcquisitionPixelsInfo(
-                **global_pixels_info[scene][acq.camera_name][acq.cocoa_condition])
+            for idx, acq_info in enumerate(acquisitions_info_list):
+                acq_pixels_dict = global_pixels_info[scene][acq_info.camera_name][acq_info.cocoa_condition]
+                acq_pixels = AcquisitionPixelsInfo(**acq_pixels_dict)
 
-            image_raw = acq.load_image(normalize=False)
-            print(f"Loading an image from the {acq.camera_name.value.upper()} camera with shape {image_raw.shape}.")
+                image_raw = acq_info.load_image(normalize=False)
+                print(
+                    f"Loading an image from the {acq_info.camera_name.value.upper()} camera,"
+                    f" with shape {image_raw.shape}."
+                )
 
-            image_normalized = acq.normalize_image(image=image_raw)
-            fill_figure(
-                axs_orig,
-                col_idx=idx,
-                image=image_normalized,
-                acquisition_info=acq,
-                acquisition_pixels=acquisition_pixels
-            )
+                image_normalized = acq_info.normalize_image(image=image_raw)
+                fill_figure(
+                    axs_original,
+                    col_idx=idx,
+                    image=image_normalized,
+                    acquisition_info=acq_info,
+                    acquisition_pixels=acq_pixels
+                )
 
-            image_referenced = apply_reference_spectrum(image_raw, acquisition_pixels=acquisition_pixels)
-            fill_figure(
-                axs_refr,
-                col_idx=idx,
-                image=image_referenced,
-                acquisition_info=acq,
-                acquisition_pixels=acquisition_pixels
-            )
+                image_referenced = apply_reference_spectrum(image_raw, acquisition_pixels=acq_pixels)
+                fill_figure(
+                    axs_referenced,
+                    col_idx=idx,
+                    image=image_referenced,
+                    acquisition_info=acq_info,
+                    acquisition_pixels=acq_pixels
+                )
 
-            flat = acq.load_flat_field()
-            dark = acq.load_dark_field()
-            image_fielded = correct_flat_and_dark(image_raw, flat_field=flat, dark_field=dark)
-            image_fielded = apply_reference_spectrum(image_fielded, acquisition_pixels=acquisition_pixels)
-            fill_figure(
-                axs_fiel,
-                col_idx=idx,
-                image=image_fielded,
-                acquisition_info=acq,
-                acquisition_pixels=acquisition_pixels
-            )
+                flat = acq_info.load_flat_field()
+                dark = acq_info.load_dark_field()
+                image_fielded = correct_flat_and_dark(image_raw, flat_field=flat, dark_field=dark)
+                image_fielded = apply_reference_spectrum(image_fielded, acquisition_pixels=acq_pixels)
+                fill_figure(
+                    axs_fielded,
+                    col_idx=idx,
+                    image=image_fielded,
+                    acquisition_info=acq_info,
+                    acquisition_pixels=acq_pixels
+                )
 
-        plt.show()
-        print()
+            plt.show()
+            print()
 
 
 if __name__ == "__main__":
