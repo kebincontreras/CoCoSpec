@@ -7,8 +7,9 @@ from pydantic import BaseModel
 from src.const.enums import CamerasEnum, CocoaConditionsEnum, ImageFormatsEnum, file_extension
 from src.const.hyperspectral_image import HyperspectralImage
 from src.const.paths import image_filepath, annotations_filepath
-from src.loading.loading import load_image
+from src.loading.loading import load_image, load_acquisitions_pixels_info
 from src.schemas.cameras import CameraInfo
+from src.schemas.pixel_managers import AcquisitionPixelsInfo
 
 
 class AcquisitionInfo(BaseModel):
@@ -43,6 +44,11 @@ class AcquisitionInfo(BaseModel):
     def load_camera_info(self) -> CameraInfo:
         camera_info = CameraInfo.from_name(camera_name=self.camera_name)
         return camera_info
+
+    def load_pixels_info(self) -> AcquisitionPixelsInfo:
+        global_pixels_info = load_acquisitions_pixels_info()
+        pixels_info = global_pixels_info[self.scene][self.camera_name][self.cocoa_condition]
+        return AcquisitionPixelsInfo(**pixels_info)
 
     def load_wavelengths(self) -> np.ndarray:
         return self.load_camera_info().load_wavelengths()

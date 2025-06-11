@@ -10,7 +10,8 @@ import spectral
 import tifffile as tiff
 from PIL import Image
 
-from src.const.enums import CamerasEnum, ImageFormatsEnum, CocoaConditionsEnum
+from src.const.enums import ImageFormatsEnum
+from src.const.paths import metadata_dir
 
 
 def load_from_json(filepath: Path) -> dict | list[dict]:
@@ -19,7 +20,7 @@ def load_from_json(filepath: Path) -> dict | list[dict]:
     return content
 
 
-def get_item(items_list: dict, key: str, value: Any) -> Any:
+def get_item(items_list: list[dict], key: str, value: Any) -> Any:
     for item in items_list:
         if item[key] == value:
             return item
@@ -59,28 +60,6 @@ def load_image(
         raise ValueError(f"Image format '{image_format}' is not supported yet.")
 
     return np.asarray(image_arr)
-
-
-def load_campaign_metadata():
-    camera_to_metadata_mapper = {
-        CamerasEnum.EOS_M50: {
-            "format": ImageFormatsEnum.JPG,
-            "cocoa_conditions": [CocoaConditionsEnum.OPEN]
-        },
-        CamerasEnum.SPECIM_IQ: {
-            "format": ImageFormatsEnum.ENVI,
-            "cocoa_conditions": [CocoaConditionsEnum.OPEN, CocoaConditionsEnum.CLOSED]
-        },
-        CamerasEnum.TOUCAN: {
-            "format": ImageFormatsEnum.NPY,
-            "cocoa_conditions": [CocoaConditionsEnum.OPEN, CocoaConditionsEnum.CLOSED]
-        },
-        CamerasEnum.ULTRIS_SR5: {
-            "format": ImageFormatsEnum.TIFF,
-            "cocoa_conditions": [CocoaConditionsEnum.OPEN, CocoaConditionsEnum.CLOSED]
-        },
-    }
-    return camera_to_metadata_mapper
 
 
 def load_yolo_annotations_fixed(annotation_path, img_width, img_height):
@@ -136,6 +115,11 @@ def crop_wavelengths(
     return wavelengths[mask]
 
 
+def load_cameras_metadata() -> list[dict]:
+    cameras_metadata = load_from_json(filepath=metadata_dir() / "cameras.json")
+    return cameras_metadata
+
+
 def load_acquisitions_pixels_info() -> dict:
     global_pixels_info = {
         19: {
@@ -160,7 +144,24 @@ def load_acquisitions_pixels_info() -> dict:
                 "open": {
                     "reference": {
                         "center_position": [288, 76],
-                        "size": 1,
+                        "size": 0,
+                    },
+                    "selected": {
+                        "positions": [
+                            [207, 216],
+                        ],
+                        "labels": [
+                            "Bean 1",
+                        ],
+                        "categories": [
+                            "Bean 1",
+                        ],
+                    },
+                },
+                "closed": {
+                    "reference": {
+                        "center_position": [288, 76],
+                        "size": 0,
                     },
                     "selected": {
                         "positions": [
@@ -180,7 +181,24 @@ def load_acquisitions_pixels_info() -> dict:
                 "open": {
                     "reference": {
                         "center_position": [197, 1357],
-                        "size": 1,
+                        "size": 0,
+                    },
+                    "selected": {
+                        "positions": [
+                            [1162, 1346],
+                        ],
+                        "labels": [
+                            "Bean 1",
+                        ],
+                        "categories": [
+                            "Bean 1",
+                        ],
+                    },
+                },
+                "closed": {
+                    "reference": {
+                        "center_position": [197, 1357],
+                        "size": 0,
                     },
                     "selected": {
                         "positions": [
@@ -200,7 +218,24 @@ def load_acquisitions_pixels_info() -> dict:
                 "open": {
                     "reference": {
                         "center_position": [2, 104],
-                        "size": 1,
+                        "size": 0,
+                    },
+                    "selected": {
+                        "positions": [
+                            [162, 108],
+                        ],
+                        "labels": [
+                            "Bean 1",
+                        ],
+                        "categories": [
+                            "Bean 1",
+                        ],
+                    },
+                },
+                "closed": {
+                    "reference": {
+                        "center_position": [2, 104],
+                        "size": 0,
                     },
                     "selected": {
                         "positions": [
