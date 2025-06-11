@@ -136,39 +136,85 @@ def crop_wavelengths(
     return wavelengths[mask]
 
 
-def load_pixels_info() -> dict:
-    pixels_info = {
+def load_acquisitions_pixels_info() -> dict:
+    global_pixels_info = {
         19: {
             "eos_m50": {
-                "reference_spectra": None,
-                "selected_positions": [
-                    [2292, 3554],
-                ],
+                "open": {
+                    "reference": None,
+                    "selected": {
+                        "positions": [
+                            [2292, 3554],
+                        ],
+                        "labels": [
+                            "Bean 1",
+                        ],
+                        "categories": [
+                            "Bean 1",
+                        ],
+                    },
+                },
             },
+
             "specim_iq": {
-                "reference_spectra": [
-                    [288, 76],
-                ],
-                "selected_positions": [
-                    [207, 216],
-                ],
+                "open": {
+                    "reference": {
+                        "center_position": [288, 76],
+                        "size": 1,
+                    },
+                    "selected": {
+                        "positions": [
+                            [207, 216],
+                        ],
+                        "labels": [
+                            "Bean 1",
+                        ],
+                        "categories": [
+                            "Bean 1",
+                        ],
+                    },
+                },
             },
+
             "toucan": {
-                "reference_spectra": [
-                    [197, 1357],
-                ],
-                "selected_positions": [
-                    [1162, 1346],
-                ],
+                "open": {
+                    "reference": {
+                        "center_position": [197, 1357],
+                        "size": 1,
+                    },
+                    "selected": {
+                        "positions": [
+                            [1162, 1346],
+                        ],
+                        "labels": [
+                            "Bean 1",
+                        ],
+                        "categories": [
+                            "Bean 1",
+                        ],
+                    },
+                },
             },
+
             "ultris_sr5": {
-                "reference_spectra": [
-                    [2, 104],
-                ],
-                "selected_positions": [
-                    [162, 108],
-                ],
+                "open": {
+                    "reference": {
+                        "center_position": [2, 104],
+                        "size": 1,
+                    },
+                    "selected": {
+                        "positions": [
+                            [162, 108],
+                        ],
+                        "labels": [
+                            "Bean 1",
+                        ],
+                        "categories": [
+                            "Bean 1",
+                        ],
+                    },
+                },
             },
-        }
+        },
     }
-    return pixels_info
+    return global_pixels_info

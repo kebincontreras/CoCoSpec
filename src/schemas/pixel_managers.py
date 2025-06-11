@@ -53,7 +53,7 @@ class PixelsNeighborhood(BaseModel):
         return image[self.center_position[0], self.center_position[1], :]
 
     def get_average_spectrum(self, image: np.ndarray) -> np.ndarray:
-        rows, cols = self.get_positions_array()
+        rows, cols = self.get_positions_array().T
         spectra = image[rows, cols, :]
         return spectra.mean(axis=0)
 
@@ -89,5 +89,23 @@ class PixelsNeighborhood(BaseModel):
 
 
 class AcquisitionPixelsInfo(BaseModel):
-    reference_spectra: PixelsNeighborhood | PixelsList | None
-    selected_spectra: PixelsNeighborhood | PixelsList | None
+    reference: PixelsNeighborhood | None
+    selected: PixelsList | None
+
+    def get_reference_pixels_positions(self) -> np.ndarray:
+        """
+        Returns the positions of all the pixels as an array of shape N x 2 (i.e., N x [row, col]).
+        """
+        return self.reference.get_positions_array()
+
+    def get_reference_spectra(self, image: np.ndarray) -> np.ndarray:
+        return self.reference.get_spectra(image=image)
+
+    def get_selected_pixels_positions(self) -> np.ndarray:
+        """
+        Returns the positions of all the pixels as an array of shape N x 2 (i.e., N x [row, col]).
+        """
+        return self.selected.get_positions_array()
+
+    def get_selected_spectra(self, image:np.ndarray) ->np.ndarray:
+        return self.selected.get_spectra(image=image)
