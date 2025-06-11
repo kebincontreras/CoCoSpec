@@ -1,47 +1,10 @@
 import numpy as np
 from matplotlib import pyplot as plt
 
+from src.loading.loading import load_pixels_info
 from src.schemas.acquisitions import AcquisitionInfo
 from src.utils.arrays import normalize, min_max
 from src.utils.spectra import correct_flat_and_dark, correct_reference_spectrum
-
-
-def load_pixels_info() -> dict:
-    pixels_info = {
-        19: {
-            "eos_m50": {
-                "reference_spectra": None,
-                "selected_positions": [
-                    [2292, 3554],
-                ],
-            },
-            "specim_iq": {
-                "reference_spectra": [
-                    [288, 76],
-                ],
-                "selected_positions": [
-                    [207, 216],
-                ],
-            },
-            "toucan": {
-                "reference_spectra": [
-                    [197, 1357],
-                ],
-                "selected_positions": [
-                    [1162, 1346],
-                ],
-            },
-            "ultris_sr5": {
-                "reference_spectra": [
-                    [2, 104],
-                ],
-                "selected_positions": [
-                    [162, 108],
-                ],
-            },
-        }
-    }
-    return pixels_info
 
 
 def apply_reference_spectrum(
