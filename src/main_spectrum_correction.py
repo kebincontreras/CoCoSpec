@@ -2,19 +2,21 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 from src.schemas.acquisitions import AcquisitionInfo
+from src.utils.arrays import normalize, min_max
+from src.utils.spectra import correct_flat_and_dark, correct_reference_spectrum
 
 
 def load_pixels_info() -> dict:
     pixels_info = {
         19: {
             "eos_m50": {
-                "reference_spectrum": None,
+                "reference_spectra": None,
                 "selected_positions": [
                     [2292, 3554],
                 ],
             },
             "specim_iq": {
-                "reference_spectrum": [
+                "reference_spectra": [
                     [288, 76],
                 ],
                 "selected_positions": [
@@ -22,7 +24,7 @@ def load_pixels_info() -> dict:
                 ],
             },
             "toucan": {
-                "reference_spectrum": [
+                "reference_spectra": [
                     [197, 1357],
                 ],
                 "selected_positions": [
@@ -30,7 +32,7 @@ def load_pixels_info() -> dict:
                 ],
             },
             "ultris_sr5": {
-                "reference_spectrum": [
+                "reference_spectra": [
                     [2, 104],
                 ],
                 "selected_positions": [
@@ -89,7 +91,9 @@ def main():
             image_referenced = apply_reference_spectrum(image_raw, acquisition_info=acq, scene_pixels=scene_pixels)
             fill_figure(axs_refr, col_idx=idx, image=image_referenced, acquisition_info=acq, scene_pixels=scene_pixels)
 
-            image_fielded = apply_flat_and_dark(image_raw, acquisition_info=acq)
+            flat = acq.load_flat_field()
+            dark = acq.load_dark_field()
+            image_fielded = correct_flat_and_dark(image_raw, flat_field=flat, dark_field=dark)
             image_fielded = apply_reference_spectrum(image_fielded, acquisition_info=acq, scene_pixels=scene_pixels)
             fill_figure(axs_fiel, col_idx=idx, image=image_fielded, acquisition_info=acq, scene_pixels=scene_pixels)
 
@@ -102,59 +106,15 @@ def apply_reference_spectrum(
         acquisition_info: AcquisitionInfo,
         scene_pixels,
 ) -> np.ndarray:
-    reference_spectrum = scene_pixels[acquisition_info.camera_name]["reference_spectrum"]
-    if reference_spectrum is not None:
-        pixels_rows, pixels_cols = np.array(reference_spectrum).T
-        selected_spectra = image[pixels_rows, pixels_cols, :]
-        reference_spectrum = np.mean(selected_spectra, axis=0)
+    reference_spectra_pos = scene_pixels[acquisition_info.camera_name]["reference_spectra"]
+    if reference_spectra_pos is not None:
+        pixels_rows, pixels_cols = np.array(reference_spectra_pos).T
+        spectra_array = image[pixels_rows, pixels_cols, :]
+        reference_spectrum = np.mean(spectra_array, axis=0)
         image_corrected = correct_reference_spectrum(image, reference_spectrum)
     else:
         image_corrected = image / image.max()
     return image_corrected
-
-
-def apply_flat_and_dark(
-        image: np.ndarray,
-        acquisition_info: AcquisitionInfo,
-) -> np.ndarray:
-    flat = acquisition_info.load_flat_field()
-    dark = acquisition_info.load_dark_field()
-    image_corrected = correct_flat_and_dark(image, flat, dark)
-    return image_corrected
-
-
-def correct_reference_spectrum(
-        image: np.ndarray,
-        spectrum: np.ndarray,
-) -> np.ndarray:
-    image_corrected = image / spectrum[None, None]
-    return image_corrected
-
-
-def correct_flat_and_dark(
-        image: np.ndarray,
-        flat: np.ndarray,
-        dark: np.ndarray,
-) -> np.ndarray:
-    image_corrected = (image - dark) / (flat - dark)
-    return image_corrected
-
-
-def min_max(
-        array: np.ndarray,
-) -> np.ndarray:
-    min_vals = array.min(axis=1, keepdims=True)
-    max_vals = array.max(axis=1, keepdims=True)
-    array_min_maxed = (array - min_vals) / (max_vals - min_vals)
-    return array_min_maxed
-
-
-def normalize(
-        array: np.ndarray,
-) -> np.ndarray:
-    max_vals = array.max(axis=1, keepdims=True)
-    array_normalized = array / max_vals
-    return array_normalized
 
 
 def fill_figure(
@@ -174,9 +134,9 @@ def fill_figure(
 
     wavelengths = camera_info.load_wavelengths()
 
-    reference_spectrum = scene_pixels[acquisition_info.camera_name]["reference_spectrum"]
-    if reference_spectrum is not None:
-        pixels_rows, pixels_cols = np.array(reference_spectrum).T
+    reference_spectra_pos = scene_pixels[acquisition_info.camera_name]["reference_spectra"]
+    if reference_spectra_pos is not None:
+        pixels_rows, pixels_cols = np.array(reference_spectra_pos).T
         selected_spectra = image[pixels_rows, pixels_cols, :]
         selected_spectra = normalize(selected_spectra)
 

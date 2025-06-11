@@ -78,5 +78,5 @@ class PixelsList(BaseModel):
 
 
 class AcquisitionPixelsInfo(BaseModel):
-    reference_spectra: PixelsNeighborhood | PixelsList
-    selected_spectra: PixelsNeighborhood | PixelsList
+    reference_spectra: PixelsNeighborhood | PixelsList | None
+    selected_spectra: PixelsNeighborhood | PixelsList | None
