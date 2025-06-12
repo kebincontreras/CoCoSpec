@@ -1,11 +1,11 @@
 LABELS = {
-    0: "Good",
-    1: "Bad",
+    0: "Well",
+    1: "Poorly",
     2: "Partially"
 }
 
 COLORS = {
-    "Good": "blue",
-    "Bad": "red",
+    "Well": "blue",
+    "Poorly": "red",
     "Partially": "green"
 }

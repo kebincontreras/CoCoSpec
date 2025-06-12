@@ -4,7 +4,7 @@ from src.schemas.acquisitions import AcquisitionInfo
 
 
 def main():
-    for scene in [19]:
+    for scene in range(1, 20):
         options_list = [
             {
                 "scene": scene,
@@ -34,13 +34,13 @@ def main():
         acquisitions_list = [AcquisitionInfo(**options) for options in options_list]
 
         fig, axs = plt.subplots(nrows=1, ncols=4, squeeze=False, figsize=(15, 5))
-        for idx, acq in enumerate(acquisitions_list):
-            image = acq.load_image(normalize=True)
-            camera = acq.load_camera_info()
-            print(f"Loading an image from the {acq.camera_name.value.upper()} camera with shape {image.shape}.")
+        for idx, acq_info in enumerate(acquisitions_list):
+            image = acq_info.load_image(normalize=True)
+            camera = acq_info.load_camera_info()
+            print(f"Loading an image from the {acq_info.camera_name.value.upper()} camera with shape {image.shape}.")
             print(f"Max = {image.max()}.")
             axs[0, idx].imshow(image[:, :, camera.rgb_channels])
-            axs[0, idx].set_title(acq.camera_name.value.upper())
+            axs[0, idx].set_title(acq_info.camera_name.value.upper())
         plt.show()
 
 
