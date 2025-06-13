@@ -47,7 +47,7 @@ def load_image(
 ) -> np.ndarray:
     if image_format == ImageFormatsEnum.JPG:
         image = Image.open(fp=f"{filepath}").convert(mode='RGB')
-        image_arr = np.array(image)[:, :, ::-1]
+        image_arr = np.array(image)
 
     elif image_format in [ImageFormatsEnum.ENVI, ImageFormatsEnum.HDR]:
         image = spectral.open_image(file=f"{filepath}")
