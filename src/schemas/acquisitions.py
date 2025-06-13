@@ -122,5 +122,5 @@ class AcquisitionInfo(BaseModel):
             image=self.load_image(normalize=normalize),
             wavelengths=camera_info.load_wavelengths(),
             wavelengths_unit=camera_info.wavelengths_unit,
-            rgb_bands=camera_info.rgb_channels,
+            rgb_bands=camera_info.default_bands,
         )

@@ -22,7 +22,7 @@ def fill_figure(
 ):
     camera_info = acquisition_info.load_camera_info()
 
-    image_rgb = image[:, :, camera_info.rgb_channels]
+    image_rgb = image[:, :, camera_info.default_bands]
     image_rgb = np.clip(image_rgb, a_min=0., a_max=1.)
     axs[0, col_idx].imshow(image_rgb)
     axs[0, col_idx].set_title(acquisition_info.camera_name.value.upper())

@@ -39,7 +39,7 @@ def main():
             camera = acq_info.load_camera_info()
             print(f"Loading an image from the {acq_info.camera_name.value.upper()} camera with shape {image.shape}.")
             print(f"Max = {image.max()}.")
-            axs[0, idx].imshow(image[:, :, camera.rgb_channels])
+            axs[0, idx].imshow(image[:, :, camera.default_bands])
             axs[0, idx].set_title(acq_info.camera_name.value.upper())
         plt.show()
 

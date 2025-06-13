@@ -11,7 +11,7 @@ from src.loading.loading import get_item, load_wavelengths, load_image, load_cam
 
 class CameraInfo(BaseModel):
     name: CamerasEnum
-    rgb_channels: tuple[int, int, int]
+    default_bands: tuple[int, int, int]
     image_shape: tuple[int, int, int]  # [rows | height, columns | width, channels | bands]
     image_format: ImageFormatsEnum
     cocoa_conditions: list[CocoaConditionsEnum]
