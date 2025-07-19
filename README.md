@@ -1,29 +1,19 @@
-Dataset available at: [Spectral Cocoa Beans Dataset](https://huggingface.co/datasets/kebincontreras/Spectral_cocoa_Beans/tree/main)
+# CoCoaSpec
 
-# Bibtex
-```
-@misc {Contreras,
-	author       = { {Kebin Contreras, Mohamad Jouni, Mauro Dalla Mura, and Jorge Bacca} },
-	title        = { Spectral_cocoa_Beans (Revision 5671cdb) },
-	year         = 2025,
-	url          = { https://huggingface.co/datasets/kebincontreras/Spectral_cocoa_Beans },
-	doi          = { 10.57967/hf/4847 },
-	publisher    = { Hugging Face }
-}
-```
+This repository contains the code and resources for the CoCoaSpec project: a multimodal hyperspectral dataset of cocoa beans with physicochemical annotation.
 
-## Project Structure
+**Topic:** Non-invasive quality assessment of cocoa beans using hyperspectral imaging and physicochemical data, following the Colombian NTC 1252:2021 standard.
 
-![data_structure](assets/data_structure.png)
+**Dataset:** [CoCoSpec on HuggingFace](https://huggingface.co/datasets/ecos-nord-ginp-uis/CoCoaSpec)
 
+**Quick Start:**
+- On Windows: run `run_cocospec.bat`
+- On Linux:
+  ```bash
+  bash run_cocospec.sh
+  # or, if you get a permission error:
+  chmod +x run_cocospec.sh
+  ./run_cocospec.sh
 
-### Instructions
+The scripts will set up the environment, download and extract the dataset, and run the main analysis pipeline automatically.
 
-1. Clone this repository.
-2. Download the `data` folder from Hugging Face and ensure it matches the structure shown in the image above.
-
-### Execution
-
-When running the `main` script, it generates:
-- Plots of the average spectral signatures from local labels of each camera for both open and closed dry cocoa beans.
-- PCA analysis by scene.
