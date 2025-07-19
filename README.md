@@ -8,56 +8,55 @@ This repository contains the code and resources for the CoCoaSpec project: a mul
 
 **Quick Start:**
 
-**Requisito:** Python **3.12.3 únicamente** (no se admite ninguna otra versión)
+**Requirement:** Python **3.12.3 only** (no other version is supported)
 
-- En Windows: ejecuta `run_cocospec.bat`
-- En Linux:
+- On Windows: run `run_cocospec.bat`
+- On Linux:
   ```bash
   bash run_cocospec.sh
-  # o, si ves un error de permisos:
+  # or, if you get a permission error:
   chmod +x run_cocospec.sh
   ./run_cocospec.sh
   ```
 
-Los scripts configuran el entorno, descargan y extraen el dataset, y ejecutan el pipeline principal automáticamente.
-
+The scripts will set up the environment, download and extract the dataset, and run the main analysis pipeline automatically.
 
 ---
 
-## Pasos manuales (si los scripts automáticos fallan)
+## Manual steps (if the automatic scripts fail)
 
-1. **Instala Python 3.12.3**
-   - Descárgalo desde https://www.python.org/downloads/release/python-3123/
-   - Asegúrate de agregar Python al PATH durante la instalación.
+1. **Install Python 3.12.3**
+   - Download it from https://www.python.org/downloads/release/python-3123/
+   - Make sure to add Python to your PATH during installation.
 
-2. **Crea y activa un entorno virtual:**
+2. **Create and activate a virtual environment:**
    ```bash
    python -m venv cocospec_env
-   # En Windows:
+   # On Windows:
    cocospec_env\Scripts\activate
-   # En Linux/Mac:
+   # On Linux/Mac:
    source cocospec_env/bin/activate
    ```
 
-3. **Actualiza pip:**
+3. **Upgrade pip:**
    ```bash
    python -m pip install --upgrade pip
    ```
 
-4. **Instala las dependencias:**
+4. **Install dependencies:**
    ```bash
    pip install -r requirements.txt
    ```
 
-5. **Descarga el dataset:**
-   - Ve a [CoCoSpec en HuggingFace](https://huggingface.co/datasets/ecos-nord-ginp-uis/CoCoaSpec) y descarga `data.rar`.
-   - Coloca `data.rar` en la carpeta `data/` del repositorio.
+5. **Download the dataset:**
+   - Go to [CoCoSpec on HuggingFace](https://huggingface.co/datasets/ecos-nord-ginp-uis/CoCoaSpec) and download `data.rar`.
+   - Place `data.rar` in the `data/` folder of the repository.
 
-6. **Extrae el dataset:**
-   - Usa 7-Zip, WinRAR o unrar para extraer `data.rar` dentro de la carpeta `data/`.
-   - Deben quedar las carpetas `resources/` y `scenes/` dentro de `data/`.
+6. **Extract the dataset:**
+   - Use 7-Zip, WinRAR, or unrar to extract `data.rar` inside the `data/` folder.
+   - The folders `resources/` and `scenes/` should appear inside `data/`.
 
-7. **Ejecuta el pipeline principal:**
+7. **Run the main pipeline:**
    ```bash
    python -m src.Main
    ```
