@@ -1,0 +1,15 @@
+numpy
+matplotlib
+scikit-learn
+umap-learn
+pandas
+scikit-image
+pydantic
+spectral
+tifffile
+Pillow
+pydantic
+spectral
+tifffile
+Pillow
+

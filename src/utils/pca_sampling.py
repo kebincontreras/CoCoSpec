@@ -3,7 +3,7 @@ import warnings
 
 import matplotlib.pyplot as plt
 import numpy as np
-import umap.umap_ as umap
+import umap
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
 
@@ -17,7 +17,7 @@ def compute_random_averaged_signatures_specim(root_dir, condition, num_combinati
     num_bands = 204
 
     for scene_id in range(1, 20):
-        folder = os.path.join(root_dir, f"scenes/scene_{scene_id:02d}/specim_iq")
+        folder = os.path.join(root_dir, f"data/scenes/scene_{scene_id:02d}/specim_iq")
         img_path = os.path.join(folder, f"hsi_{condition}.dat")
         ann_path = os.path.join(folder, f"annotations_{condition}.txt")
         if not os.path.exists(img_path) or not os.path.exists(ann_path):
@@ -42,7 +42,6 @@ def compute_random_averaged_signatures_specim(root_dir, condition, num_combinati
     for label in data:
         sigs = np.array(data[label])
         if len(sigs) < group_size:
-            print(f"⚠️ Clase {label} tiene solo {len(sigs)} muestras. Requiere mínimo {group_size}.")
             continue
         for _ in range(num_combinations):
             idx = np.random.choice(len(sigs), group_size, replace=False)
@@ -51,8 +50,8 @@ def compute_random_averaged_signatures_specim(root_dir, condition, num_combinati
 
     return averaged_data
 
-
 def plot_reduction_subplots(averaged_data_open, averaged_data_closed):
+
     plt.rcParams.update({
         "font.family": "Times New Roman",
         "font.size": 30

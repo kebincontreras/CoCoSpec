@@ -195,3 +195,39 @@ cython_debug/
 
 /data/
 !/data/.gitkeep
+
+# Ignore Python virtual environments
+cocospec_env/
+venv/
+.env/
+.envrc
+
+# Ignore Python cache
+__pycache__/
+*.pyc
+
+# Ignore Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
+
+# Ignore VSCode settings
+.vscode/
+
+# Ignore only outputs or temp files inside data/, but NOT the data/ folder itself
+data/output/
+data/outputs/
+data/results/
+data/tmp/
+data/*.tmp
+
+# Do NOT ignore the data/ folder or its main content
+# Remove or comment out the following line to keep all data:
+#/data/
+# If you want to keep the folder but not upload its content, use:
+# /data/*
+# !/data/.gitkeep
+
+# Add more patterns as needed
