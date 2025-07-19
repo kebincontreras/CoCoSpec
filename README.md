@@ -7,13 +7,18 @@ This repository contains the code and resources for the CoCoaSpec project: a mul
 **Dataset:** [CoCoSpec on HuggingFace](https://huggingface.co/datasets/ecos-nord-ginp-uis/CoCoaSpec)
 
 **Quick Start:**
-- On Windows: run `run_cocospec.bat`
-- On Linux:
+
+**Requisito:** Python **3.10 a 3.12** (no se admite 3.8 ni 3.9)
+
+- En Windows: ejecuta `run_cocospec.bat`
+- En Linux:
   ```bash
   bash run_cocospec.sh
-  # or, if you get a permission error:
+  # o, si ves un error de permisos:
   chmod +x run_cocospec.sh
   ./run_cocospec.sh
+  ```
 
-The scripts will set up the environment, download and extract the dataset, and run the main analysis pipeline automatically.
+Los scripts configuran el entorno, descargan y extraen el dataset, y ejecutan el pipeline principal automáticamente.
 
+ 
