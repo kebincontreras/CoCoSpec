@@ -8,7 +8,7 @@ This repository contains the code and resources for the CoCoaSpec project: a mul
 
 **Quick Start:**
 
-**Requisito:** Python **3.10 a 3.12** (no se admite 3.8 ni 3.9)
+**Requisito:** Python **3.12.3 únicamente** (no se admite ninguna otra versión)
 
 - En Windows: ejecuta `run_cocospec.bat`
 - En Linux:

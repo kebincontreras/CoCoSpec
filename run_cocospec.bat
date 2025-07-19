@@ -7,13 +7,33 @@ REM ============================================================================
 REM GBM Detection Project - Windows Main Script with Auto-Troubleshooting
 REM =============================================================================
 
+
 setlocal enabledelayedexpansion
 
 REM Project configuration
 set PROJECT_NAME=GBM_Detection
 set ENV_NAME=cocospec_env
-set PYTHON_VERSION=3.8
 set SCRIPTS_DIR=scripts
+
+REM === Python version check: ONLY Python 3.12.3 is supported ===
+set PYTHON_EXE=
+where python3.12 >nul 2>&1
+if !errorlevel! == 0 set PYTHON_EXE=python3.12
+if not defined PYTHON_EXE (
+    where python >nul 2>&1
+    if !errorlevel! == 0 (
+        for /f "tokens=*" %%i in ('python --version 2^>^&1') do set PY_VER=%%i
+        echo !PY_VER! | findstr /C:"3.12.3" >nul
+        if !errorlevel! == 0 set PYTHON_EXE=python
+    )
+)
+if not defined PYTHON_EXE (
+    echo Error: Solo se admite Python 3.12.3. Instala esa versión y agrégala al PATH.
+    pause
+    exit /b 1
+)
+for /f "tokens=*" %%i in ('!PYTHON_EXE! -c "import sys; print(sys.executable)"') do set PYTHON_PATH=%%i
+echo Usando Python: !PYTHON_PATH! (solo 3.12.3 soportado)
 
 echo ============================================
 echo   GBM Detection Project Setup ^& Run
