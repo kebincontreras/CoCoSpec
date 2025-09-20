@@ -20,7 +20,7 @@ COLORS = {
     "Partially": "green"
 }
 
-data_dir = "C:/Users/USUARIO/Documents/GitHub/CoCoSpec/data"
+data_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data")
 
 def load_reference_from_correction(scene, camera_name, cocoa_condition):
     """

@@ -16,21 +16,39 @@ set ENV_NAME=cocospec_env
 set SCRIPTS_DIR=scripts
 
 REM === Python version check: ONLY Python 3.12.3 is supported ===
+
+REM === Buscar Python embebido primero ===
 set PYTHON_EXE=
-where python3.12 >nul 2>&1
-if !errorlevel! == 0 set PYTHON_EXE=python3.12
-if not defined PYTHON_EXE (
-    where python >nul 2>&1
-    if !errorlevel! == 0 (
-        for /f "tokens=*" %%i in ('python --version 2^>^&1') do set PY_VER=%%i
-        echo !PY_VER! | findstr /C:"3.12.3" >nul
-        if !errorlevel! == 0 set PYTHON_EXE=python
+if exist "python_embed\python.exe" (
+    set PYTHON_EXE=python_embed\python.exe
+    echo Usando Python embebido: python_embed\python.exe
+) else (
+    REM Buscar python3.12 en PATH
+    where python3.12 >nul 2>&1
+    if !errorlevel! == 0 set PYTHON_EXE=python3.12
+    if not defined PYTHON_EXE (
+        where python >nul 2>&1
+        if !errorlevel! == 0 (
+            for /f "tokens=*" %%i in ('python --version 2^>^&1') do set PY_VER=%%i
+            echo !PY_VER! | findstr /C:"3.12.3" >nul
+            if !errorlevel! == 0 set PYTHON_EXE=python
+        )
     )
-)
-if not defined PYTHON_EXE (
-    echo Error: Solo se admite Python 3.12.3. Instala esa versión y agrégala al PATH.
-    pause
-    exit /b 1
+    if not defined PYTHON_EXE (
+        REM Si existe el instalador, ejecutarlo
+        if exist "python-3.12.3-amd64.exe" (
+            echo Instalando Python 3.12.3...
+            start /wait python-3.12.3-amd64.exe /quiet InstallAllUsers=1 PrependPath=1 Include_test=0
+            REM Intentar de nuevo buscar python3.12
+            where python3.12 >nul 2>&1
+            if !errorlevel! == 0 set PYTHON_EXE=python3.12
+        )
+    )
+    if not defined PYTHON_EXE (
+        echo Error: Solo se admite Python 3.12.3. Instala esa versión y agrégala al PATH o coloca el embebido en python_embed.
+        pause
+        exit /b 1
+    )
 )
 for /f "tokens=*" %%i in ('!PYTHON_EXE! -c "import sys; print(sys.executable)"') do set PYTHON_PATH=%%i
 echo Usando Python: !PYTHON_PATH! (solo 3.12.3 soportado)
